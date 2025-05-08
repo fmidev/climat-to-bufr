@@ -949,6 +949,7 @@ def bufr_encode(ibufr, subs):
                 # per square metre (with precision in tenths of a kilogram per square metre) using
                 # 0 13 060 (Total accumulated precipitation).
                 # Note: Trace shall be reported as “–0.1 kg m–2”. 
+                # 1 kg /m^2 ~ 1 L / m^2 = 1dm^3 / m^2 = 0,001 m^3 / m^2 = 0,001 m = 1 mm
 
         # 4053 Number of days with precipitation equal to or more than 1 mm
             #2#numberOfDaysWithPrecipitationEqualToOrMoreThan1Mm
@@ -973,7 +974,7 @@ def bufr_encode(ibufr, subs):
             # codes_set(ibufr, 'qualifierForNumberOfMissingValuesInCalculationOfStatisti', 8)
             # lista=[1,2,3,4,5,6,7,8]
             codes_set_array(ibufr, 'qualifierForNumberOfMissingValuesInCalculationOfStatisti', subs.N_MISS)
-        # 8020 Total number of missing entities (with respect to accumulation or average) (see Note 6)
+        # 8020 Total number of missing entities (with respect to accumulation or average) (see Note 6) Years
             #8..15#totalNumberOfMissingEntitiesWithRespectToAccumulationOrAverage
             # codes_set(ibufr, 'totalNumberOfMissingEntitiesWithRespectToAccumulationOrAverage', S28_YP) # kuukausi -> vuosi
             # codes_set(ibufr, 'totalNumberOfMissingEntitiesWithRespectToAccumulationOrAverage', S28_YT) # kuukausi -> vuosi

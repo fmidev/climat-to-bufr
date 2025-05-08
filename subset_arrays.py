@@ -23,7 +23,7 @@ class Subset:
             (for example, 02 is for Finland and Sweden), the last 3 digits (xxx) are
             called a station number, which tells the id of the station.
         3. After that, values that depend on N_CALC are set to missing.
-        4. Values that depend only on N_CALC (cloud cover total) are given.
+
         5. The rest of all the needed values are given.
         6. Functions which gives the right values to bufr message, are placed below.
     """
@@ -92,8 +92,8 @@ class Subset:
         self.P_SEA = [self.S12_P, self.S22_P]
         self.S15_E = str2float(miss_list, 34)  # hPA? -> [PA]
         self.S25_E = str2float(miss_list, 34)  # hPA? -> [PA]
-        self.S16_R = str2float(miss_list, 40)  # kato
-        self.S26_R = str2float(miss_list, 40)  # kato
+        self.S16_R = str2float(miss_list, 40)  #  1.0 kg /m² ~ 1 mm 
+        self.S26_R = str2float(miss_list, 40)  #  1.0 kg /m² ~ 1 mm 
         self.S16_RD = str2int(miss_list, 31)
         self.S16_NR = str2int(miss_list, 32)
         self.S26_NR = str2int(miss_list, 32)
@@ -111,46 +111,45 @@ class Subset:
         self.S24_TN = str2float(miss_list, 50)
         self.S13_ST = str2float(miss_list, 50)
         self.S23_ST = str2float(miss_list, 50)
-        self.S18_MP = str2int(miss_list, 51)  # kato mika miss arvo 
-        self.S18_MT = str2int(miss_list, 51)  # kato mika miss arvo
-        self.S19_ME = str2int(miss_list, 51)  # kato mika miss arvo
-        self.S18_MTX = str2int(miss_list, 51)  # kato mika miss arvo
-        self.S18_MTN = str2int(miss_list, 51)  # kato mika miss arvo
-        self.S19_MS = str2int(miss_list, 51)  # kato mika miss arvo
-        self.S19_MR = str2int(miss_list, 51)  # kato mika miss arvo
-        self.S28_YP = str2int(miss_list, 51)  # kato mika miss arvo
-        self.S28_YT = str2int(miss_list, 51)  # kato mika miss arvo
-        self.S28_YTX = str2int(miss_list, 51)  # okato mika miss arvo
-        self.S29_YE = str2int(miss_list, 51)  # kato mika miss arvo
-        self.S29_YR = str2int(miss_list, 51)  # kato mika miss arvo
-        self.S29_YS = str2int(miss_list, 51)  # kato mika miss arvo
-        ?????????? jait tanne, ja ylla olevat kommentit voi katsoa kans
-        self.S38_F10 = str2int(miss_list, 66)  # on 
-        self.S38_F20 = str2int(miss_list, 66)  # on
-        self.S38_F30 = str2int(miss_list, 66)  # on
-        self.S32_TX0 = str2int(miss_list, 66)  # on
-        self.S30_T25 = str2int(miss_list, 66)  # on
-        self.S30_T30 = str2int(miss_list, 66)  # on
-        self.S31_T35 = str2int(miss_list, 66)  # on
-        self.S31_T40 = str2int(miss_list, 66)  # on
-        self.S32_TN0 = str2int(miss_list, 66)  # on
-        self.S36_S00 = str2int(miss_list, 66)  # on
-        self.S36_S01 = str2int(miss_list, 66)  # on
-        self.S37_S10 = str2int(miss_list, 66)  # on
-        self.S37_S50 = str2int(miss_list, 66)  # on
-        self.S39_V1 = str2int(miss_list, 53)  # on
-        self.S39_V2 = str2int(miss_list, 53)  # on
-        self.S39_V3 = str2int(miss_list, 53)  # on
-        self.S33_R01 = str2int(miss_list, 66)  # on
-        self.S33_R05 = str2int(miss_list, 66)  # on
-        self.S34_R10 = str2int(miss_list, 66)  # on
-        self.S34_R50 = str2int(miss_list, 66)  # on
-        self.S35_R100 = str2int(miss_list, 66)  # on
-        self.S35_R150 = str2int(miss_list, 66)  # on
+        self.S18_MP = str2int(miss_list, 51) 
+        self.S18_MT = str2int(miss_list, 51)
+        self.S19_ME = str2int(miss_list, 51)
+        self.S18_MTX = str2int(miss_list, 51)
+        self.S18_MTN = str2int(miss_list, 51)
+        self.S19_MS = str2int(miss_list, 51)
+        self.S19_MR = str2int(miss_list, 51)
+        self.S28_YP = str2int(miss_list, 51)
+        self.S28_YT = str2int(miss_list, 51)
+        self.S28_YTX = str2int(miss_list, 51)
+        self.S29_YE = str2int(miss_list, 51)
+        self.S29_YR = str2int(miss_list, 51)
+        self.S29_YS = str2int(miss_list, 51)
+        self.S38_F10 = str2int(miss_list, 51)
+        self.S38_F20 = str2int(miss_list, 51)
+        self.S38_F30 = str2int(miss_list, 51)
+        self.S32_TX0 = str2int(miss_list, 51)
+        self.S30_T25 = str2int(miss_list, 51)
+        self.S30_T30 = str2int(miss_list, 51)
+        self.S31_T35 = str2int(miss_list, 51)
+        self.S31_T40 = str2int(miss_list, 51)
+        self.S32_TN0 = str2int(miss_list, 51)
+        self.S36_S00 = str2int(miss_list, 51)
+        self.S36_S01 = str2int(miss_list, 51)
+        self.S37_S10 = str2int(miss_list, 51)
+        self.S37_S50 = str2int(miss_list, 51)
+        self.S39_V1 = str2int(miss_list, 51)
+        self.S39_V2 = str2int(miss_list, 51)
+        self.S39_V3 = str2int(miss_list, 51)
+        self.S33_R01 = str2int(miss_list, 51)
+        self.S33_R05 = str2int(miss_list, 51)
+        self.S34_R10 = str2int(miss_list, 51)
+        self.S34_R50 = str2int(miss_list, 51)
+        self.S35_R100 = str2int(miss_list, 51)
+        self.S35_R150 = str2int(miss_list, 51)
         self.S40_TXD = str2float(miss_list, 50)
         self.S41_TND = str2float(miss_list, 50)
-        self.S45_IW = str2int(miss_list, ?)  # on
-        self.S45_FX =  str2float(miss_list, ?)  # on
+        self.S45_IW = str2int(miss_list, 66)
+        self.S45_FX =  str2float(miss_list, 67)
 
     # 2.
         for key in k_a:
@@ -280,101 +279,94 @@ class Subset:
                 self.R_HH6 = get_number_list(self.NSUB, 6)
                 self.R_MI = get_number_list(self.NSUB, 0)
             elif key == 'S38_F10':
-                self.S38_F10 = str2int(v_a[k_a.index(key)], 66)
+                self.S38_F10 = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S38_F20':
-                self.S38_F20 = str2int(v_a[k_a.index(key)], 66)
+                self.S38_F20 = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S38_F30':
-                self.S38_F30 = str2int(v_a[k_a.index(key)], 66)
+                self.S38_F30 = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S32_TX0':
-                self.S32_TX0 = str2int(v_a[k_a.index(key)], 66)
+                self.S32_TX0 = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S30_T25':
-                self.S30_T25 = str2int(v_a[k_a.index(key)], 66)
+                self.S30_T25 = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S30_T30':
-                self.S30_T30 = str2int(v_a[k_a.index(key)], 66)
+                self.S30_T30 = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S31_T35':
-                self.S31_T35 = str2int(v_a[k_a.index(key)], 66)
+                self.S31_T35 = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S31_T40':
-                self.S31_T40 = str2int(v_a[k_a.index(key)], 66)
+                self.S31_T40 = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S32_TN0':
-                self.S32_TN0 = str2int(v_a[k_a.index(key)], 66)
+                self.S32_TN0 = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S36_S00':
-                self.S36_S00 = str2int(v_a[k_a.index(key)], 66)
+                self.S36_S00 = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S36_S01':
-                self.S36_S01 = str2int(v_a[k_a.index(key)], 66)
+                self.S36_S01 = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S37_S10':
-                self.S37_S10 = str2int(v_a[k_a.index(key)], 66)
+                self.S37_S10 = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S37_S50':
-                self.S37_S50 = str2int(v_a[k_a.index(key)], 66)
+                self.S37_S50 = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S39_V1':
-                self.S39_V1 = str2int(v_a[k_a.index(key)], 66)
+                self.S39_V1 = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S39_V2':
-                self.S39_V2 = str2int(v_a[k_a.index(key)], 66)
+                self.S39_V2 = str2int(v_a[k_a.index(key)], 51)
             elif key == '39_V3':
-                self.S39_V3 = str2int(v_a[k_a.index(key)], 66)
+                self.S39_V3 = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S33_R01':
-                self.S33_R01 = str2int(v_a[k_a.index(key)], 66)
+                self.S33_R01 = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S33_R05':
-                self.S33_R05 = str2int(v_a[k_a.index(key)], 66)
+                self.S33_R05 = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S34_R10':
-                self.S34_R10 = str2int(v_a[k_a.index(key)], 66)
+                self.S34_R10 = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S34_R50':
-                self.S34_R50 = str2int(v_a[k_a.index(key)], 66)
+                self.S34_R50 = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S35_R100':
-                self.S35_R100 = str2int(v_a[k_a.index(key)], 66)
+                self.S35_R100 = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S35_R150':
-                self.S35_R150 = str2int(v_a[k_a.index(key)], 66)
+                self.S35_R150 = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S40_TXD':
                 self.S40_TXD = str2float(v_a[k_a.index(key)], 50)
             elif key == 'S41_TND':
                 self.S41_TND = str2float(v_a[k_a.index(key)], 50)
             elif key == 'S45_IW':
-                self.S45_IW = str2int(v_a[k_a.index(key)], ?)
+                self.S45_IW = str2int(v_a[k_a.index(key)], 66)
             elif key == 'S45_FX':
-                self.S45_FX = str2float(v_a[k_a.index(key)], ?)
+                self.S45_FX = str2float(v_a[k_a.index(key)], 67)
 
     # 5.
-    ? Tee funktiot, etta tulee yks aina jokaisesta jarjestuksessa, ei ensin kaikki yhet ja sitten toiset
-        self.YYYY = [self.R_YYYY, self.S20_YB, self.S20_YC, self.S20_YB, self.S20_YC]
-        self.MM = [self.R_MM, self.R_MM, self.R_MM]
-        self.DD = [self.R_DD, self.S40_YX, self.S41_YN, self.S42_YAX, self.S43_YAN, self.S45_YFX, self.R_DD, self.S44_YR, self.R_DD, self.R_DD]
-        self.HH24 = [self.R_HH0, self.R_HH6, self.R_HH0, self.R_HH6]
-        self.MI = [self.R_MI]
+    # Tee funktiot, etta tulee yks aina jokaisesta jarjestuksessa, ei ensin kaikki yhet ja sitten toiset
+        self.YYYY = make_list([self.R_YYYY, self.S20_YB, self.S20_YC, self.S20_YB, self.S20_YC], self.NSUB)
+        self.MM = make_list([self.R_MM, self.R_MM, self.R_MM], self.NSUB)
+        self.DD = make_list([self.R_DD, self.S40_YX, self.S41_YN, self.S42_YAX, self.S43_YAN, self.S45_YFX, self.R_DD, self.S44_YR, self.R_DD, self.R_DD], self.NSUB)
+        self.HH24 = make_list([self.R_HH0, self.R_HH6, self.R_HH0, self.R_HH6])
+        self.MI = self.R_MI
         self.NM = days_in_month_list(self.R_YYYY, self.R_MM)
         self.UTC_DIFF = get_times(self.R_MM, 4)
-        self.TP = [self.UTC_DIFF, self.NM, self.NM, self.UTC_DIFF, get_number_list(self.NSUB, 1), get_number_list(self.NSUB, 1)]
-        self.TOT_MISS = [self.S18_MP, self.S18_MT, self.S19_ME, self.S18_MTX, self.S18_MTN,
+        self.TP = make_list([self.UTC_DIFF, self.NM, self.NM, self.UTC_DIFF, get_number_list(self.NSUB, 1), get_number_list(self.NSUB, 1)], self.NSUB)
+        self.TOT_MISS = make_list([self.S18_MP, self.S18_MT, self.S19_ME, self.S18_MTX, self.S18_MTN,
             self.S19_MS, self.S19_MR,
-            self.S28_YP, self.S28_YT, self.S28_YTX,self.S29_YE, self.S29_YR, self.S29_YS,self.S28_YTX, self.S28_YTX]
-        self.TNRA = [self.S38_F10, self.S38_F20, self.S38_F30, self.S32_TX0,
+            self.S28_YP, self.S28_YT, self.S28_YTX,self.S29_YE, self.S29_YR, self.S29_YS,self.S28_YTX, self.S28_YTX], self.NSUB)
+        self.TNRA = make_list([self.S38_F10, self.S38_F20, self.S38_F30, self.S32_TX0,
              self.S30_T25, self.S30_T30, self.S31_T35, self.S31_T40, self.S32_TN0,
              self.S36_S00, self.S36_S01, self.S37_S10, self.S37_S50
              self.S39_V1, self.S39_V2, self.S39_V3, miss, miss,
-             self.S33_R01, self.S33_R05, self.S34_R10, self.S34_R50, self.S35_R100, self.S35_R150]
-        self.P_ST = [self.S11_P, self.S21_P]
-        self.P_SEA = [self.S12_P, self.S22_P]
-        self.T = [self.S13_T, self.S42_TAX, self.S43_TAN, self.S23_T]
-        self.TMAX = [self.S14_TX, self.S24_TX]
-        self.TMIN = [self.S14_TN, self.S24_TN]
-        self.TMEAN = [self.S13_ST, self.S23_ST]
-        self.E = [self.S15_E, self.S25_E]
-        self.SUND = [self.S17_S, self.S17_PS, self.S27_S]
+             self.S33_R01, self.S33_R05, self.S34_R10, self.S34_R50, self.S35_R100, self.S35_R150], self.NSUB)
+        self.P_ST = make_list([self.S11_P, self.S21_P], self.NSUB)
+        self.P_SEA = make_list([self.S12_P, self.S22_P], self.NSUB)
+        self.T = make_list([self.S13_T, self.S42_TAX, self.S43_TAN, self.S23_T], self.NSUB)
+        self.TMAX = make_list([self.S14_TX, self.S24_TX], self.NSUB)
+        self.TMIN = make_list([self.S14_TN, self.S24_TN], self.NSUB)
+        self.TMEAN = make_list([self.S13_ST, self.S23_ST], self.NSUB)
+        self.E = make_list([self.S15_E, self.S25_E], self.NSUB)
+        self.SUND = make_list([self.S17_S, self.S17_PS, self.S27_S], self.NSUB)
         # self.DEL = replication(self.NSUB, self.NR1, self.NR2)
-        # self.CLOUD_TYPE = cloud_type_total(self.DEL, self.CL, self.CM, self.CH)
-        # self.CLA_TOTAL = cloud_amount(self.NR2, self.NH_CALC, self.CLA)
-        # self.HB = height_of_base(self.N_CALC, self.NR1, self.CLA, self.CLHB)
-        # self.VS_TOTAL = vertical_significance_total(1, self.DEL, self.VS, self.CLA)
-        # self.R_24H_TOTAL = r24h_total(self.HH24, self.R_24H)
-        self.R_AC = [self.S16_R, self.S26_R]
-        self.R_N = [self.S16_NR, self.S26_NR]
+        self.R_AC = make_list([self.S16_R, self.S26_R], self.NSUB)
+        self.R_N = make_list([self.S16_NR, self.S26_NR], self.NSUB)
         self.N_MISS = [1,2,4,7,8,6,5,1,2,3,4,5,6,7,8]
         self.SENSOR = height_of_sensor(self.ELANEM, self.ELTERM)
         self.INSTRUMENT = instrument_type(self.NSUB)
         self.FS = first_order_statistics(self.NSUB)
         self.IND = observing_method_extreme_temperatures(self.NSUB)
         self.CND = [0,1,2,3,4,5,6,7,8,16,17,18,19,20,21,22,23,24,10, 11, 12, 13, 14, 15]
-        # self.TIME_SIGNIFICANCE = time_significance(self.NSUB)
-        # self.WGD_MAX = wind_gust_direction(self.NSUB)
-        # self.WGS_MAX = wind_gust_speed(self.WG_10MIN, self.WG_1H_MAX)
+
 
 # 6.
 
@@ -530,293 +522,7 @@ def observing_method_extreme_temperatures(ns):
         ind_list.append(2)
     return ind_list
 
-def vertical_significance(n_list, nh_list, cl_list, cm_list):
-    """
-    This function calculates vertical significance for sequence 302004. It depends on:
-        n_list = N_CALC = cloud cover total
-        nh_list = NH_CALC = cloud amount
-        cl_list = CL = cloud type (low clouds)
-        cm_list = CM = cloud type (middle clouds)
-    """
-    int_list = []
-    for i in range (0, len(n_list)):
-        if n_list[i] == miss:
-            int_list.append(miss)
-        elif n_list[i] == 0:
-            int_list.append(62)
-        elif n_list[i] == 113:
-            int_list.append(5)
-        elif cl_list[i] > 0:
-            int_list.append(7)
-        elif cl_list[i] == 0 and cm_list[i] > 0:
-            int_list.append(8)
-        elif nh_list[i] == 0 and n_list != 0:
-            int_list.append(0)
-        else:
-            int_list.append(miss)
-    return int_list
 
-def vertical_significance_total(aws, del_list, vs_list , cla_list):
-    """
-    This function makes a total list of vertical significance in 307080:
-        302004: j = 0, values are made in function vertical_significance = vs_list.
-        302005: j > 0 and j <= nr1, depends on:
-            del_list = DEL = delayed replicatoin, which includes
-            nr1 = NR1 = number of repetitions of sequance 302005.
-            aws = automatic station (=1) or manual station (=0)
-            cla_list = [CLA2, CLA3, CLA4, CLA5] = cloud amount list in different layers.
-        302036: nr1 < j <= nr2 depends on:
-            del_list = DEL = delayed replicatoin, which includes
-            nr2 = NR2 = number of repetitions of sequance 302036.
-        302047: j > nr2, required from land stations mainly in the tropics.
-        8002: j > nr2 + 1, Set to missing to cancel the previous value.
-    """
-    int_list = []
-    list2 = cla_list[0]
-    list3 = cla_list[1]
-    list4 = cla_list[2]
-    list5 = cla_list[3]
-    k = 0
-    for i in range (0, len(vs_list)):
-        nr1 = del_list[k]
-        nr2 = del_list[k+1]
-        for j in range(0, 5 + nr1 + nr2):
-            if j == 0:
-                int_list.append(vs_list[i])
-            elif 0 < j <= nr1:
-                if aws == 0:
-                    int_list.append(j)
-                else:
-                    if nr1 == 1 and list2[i] == miss:
-                        int_list.append(miss)
-                    elif nr1 == 2 and list3[i] == miss:
-                        int_list.append(miss)
-                    elif nr1 == 3 and list4[i] == miss:
-                        int_list.append(miss)
-                    elif nr1 == 4 and list5[i] == miss:
-                        int_list.append(miss)
-                    else:
-                        int_list.append(20 + j)
-            else:
-                int_list.append(miss)
-        k = k + 2
-    return int_list
-
-def cloud_amount(nr2_list, list1, cla_list):
-    """
-    This funtion makes a total list of cloud amount:
-        302004: j = 0. Depends on list1 = NH_CALC = cloud amount.
-        302005: j = 1, 2, 3, 4. Depends on:
-            cla_list = [CLA2, CLA3, CLA4, CLA5] = cloud amount list in different layers.
-        302036: j > 5. Number of cloud amount depends on the
-            nr2_list = NR2 = number of repetitions of sequance 302036.
-    """
-    int_list = []
-    list2 = cla_list[0]
-    list3 = cla_list[1]
-    list4 = cla_list[2]
-    list5 = cla_list[3]
-    for i in range (0, len(list1)):
-        for j in range (0, 5 + nr2_list[i]):
-            if j == 0:
-                int_list.append(list1[i])
-            elif j == 1:
-                value = list2[i]
-                if list2[i] == 0:
-                    value = miss
-                int_list.append(value)
-            elif j == 2 and list3[i] != miss:
-                value = list3[i]
-                if list3[i] == 0:
-                    value = miss
-                int_list.append(value)
-            elif j == 3 and list4[i] != miss:
-                value = list4[i]
-                if list4[i] == 0:
-                    value = miss
-                int_list.append(value)
-            elif j == 4 and list5[i] != miss:
-                value = list5[i]
-                if list5[i] == 0:
-                    value = miss
-                int_list.append(value)
-            elif j > 5:
-                int_list.append(miss)
-    return int_list
-
-def value_for_cloud_type(c_id, cloud_value ):
-    """
-    This function gets right value for cloud type. c_id is the cloud type id:
-        for CL c_id = 30
-        for CM c_id = 20
-        for CH c_id = 10
-    cloud_value is either the data value of cloud type (string) or value of cloud cover (integer).
-    """
-    value = int(cloud_value ) + c_id
-    if cloud_value  == 113:
-        if c_id == 30:
-            value = 62
-        elif c_id == 20:
-            value = 61
-        elif c_id == 10:
-            value = 60
-    elif int(cloud_value ) == 10:
-        value = 63
-    return value
-
-def cloud_type(n_list, str_list, x):
-    """
-    This function calculates cloud type 20012 for sequence 302004. It depends on:
-        n_list = N_CALC = cloud cover total
-        str_list = values of cloud type
-        x = id of cloud type
-    """
-    int_list = []
-    for i in range (0, len(str_list)):
-        if n_list[i] == 113:
-            int_list.append(value_for_cloud_type(x, n_list[i]))
-        elif str_list[i] == '-1e+100' or n_list[i] == miss:
-            int_list.append(miss)
-        else:
-            int_list.append(value_for_cloud_type(x, str_list[i]))
-    return int_list
-
-def cloud_type_total(del_list, cl_list, cm_list, ch_list):
-    """
-    This function makes the whole list of cloud types:
-    302004: j = 0, 1, 2. Depends on:
-        cl_list = CL = cloud type (low cloud)
-        cm_list = CM = cloud type (middle cloud)
-        ch_list = CH = cloud type (high cloud)
-    302005: j > 2. Depends on:
-        del_list = DEL = delayed replicatoin, which includes
-        nr1 = NR1 = number of repetitions of sequance 302005.
-    302036: j > 2. Number of cloud types depends on the
-        del_list = DEL = delayed replicatoin, which includes
-        nr2 = NR2 = number of repetitions of sequance 302036.
-    302048: given if value of cloud type is given for cloud elevation
-    """
-    int_list = []
-    m = 0
-    for i in range(0, len(cl_list)):
-        nr1 = del_list[m]
-        nr2 = del_list[m+1]
-        k = 4 + nr1 + nr2
-        for j in range(0, k):
-            if j == 0:
-                int_list.append(cl_list[i])
-            elif j == 1:
-                int_list.append(cm_list[i])
-            elif j == 2:
-                int_list.append(ch_list[i])
-            else:
-                int_list.append(63)
-        m = m + 2
-    return int_list
-
-def number_of_repetition1(cla_list):
-    """
-    Number of repetition in sequance 302005. Depends on:
-        cla_list = [CLA2, CLA3, CLA4, CLA5] = cloud amount list in different layers.
-    """
-    list2 = cla_list[0]
-    list3 = cla_list[1]
-    list4 = cla_list[2]
-    list5 = cla_list[3]
-    int_list = []
-    for i in range(0, len(list2)):
-        int_list.append(1)
-
-    for i in range (0, len(list2)):
-        if list5[i] == miss or list5[i] == 0:
-            if list4[i] == miss or list4[i] == 0:
-                if list3[i] == miss or list3[i] == 0:
-                    int_list[i] = 1
-                else:
-                    int_list[i] = 2
-            else:
-                int_list[i] = 3
-        else:
-            int_list[i] = 4
-    return int_list
-
-def str2int_cloud_amount(n_list, str_list, x):
-    """
-    Function converts cloud amount data from string to integer.
-        302004: x = 28, the integer value depends on:
-            n_list = N_CALC = cloud cover total
-            str_list = values in data
-        302005: 12 <= x <= 15, the integer value depends on:
-            str_list = values in data
-        302036: depends on values in data (there is none)
-    """
-    int_list = []
-    for i in range (0, len(str_list)):
-        if x == 12 and str_list[i] == '0':
-            value = 0
-        elif x == 12 and str_list[i] == '-1e+100':
-            value = miss
-        elif 13 <= x <= 15 and str_list[i] in ('0', '-1e+100'):
-            value = miss
-        elif x == 28 and n_list[i] == 0:
-            value = 0
-        elif x == 28 and n_list[i] == 113:
-            value = 9
-        elif x == 28 and str_list[i] == '-1e+100':
-            value = miss
-        elif x == 28 and n_list[i] == miss:
-            value = miss
-        else:
-            value = int(str_list[i])
-        int_list.append(value)
-    return int_list
-
-def value_for_height_of_base(h_value, c_value):
-    """
-    Funciton chooses value for height of base. Depends on:
-        h_value = value of height of base
-        c_value = value of cloud amount.
-    """
-    if c_value == miss:
-        value = missD
-    else:
-        value = h_value
-    return value
-
-def height_of_base(n_list, nr1_list, cla_list, hb_list):
-    """
-    Function makes total list of height of base from.
-        302004: j = 0. Depends on:
-            n_list = N_CALC = cloud cover total
-            hb_list[0] = HB[0] = NH_CALC ) height of base data.
-        302005: j >= 1. Depends on:
-            nr1_list = NR1 = number of repetition of sequence 302005.
-            cla_list = [CLA2, CLA3, CLA4, CLA5] = cloud amount list in
-                different layers.
-            rest of hb_list = [CLHB2, CLHB3, CLHB4, CLHB5] = height of base
-                of cloud layers.
-    """
-    float_list = []
-    for i in range (0, len(nr1_list)):
-        d = nr1_list[i] + 1
-        for j in range (0, d):
-            h_list = hb_list[j]
-            if j == 0:
-                if n_list[i] in (miss, 0):
-                    float_list.append(missD)
-                else:
-                    float_list.append(h_list[i])
-            else:
-                c_list = cla_list[j-1]
-                if j == 1:
-                    float_list.append(value_for_height_of_base(h_list[i], c_list[i]))
-                elif j == 2:
-                    float_list.append(value_for_height_of_base(h_list[i], c_list[i]))
-                elif j == 3:
-                    float_list.append(value_for_height_of_base(h_list[i], c_list[i]))
-                else:
-                    float_list.append(value_for_height_of_base(h_list[i], c_list[i]))
-    return float_list
 
 def height_of_sensor(elanem_list, elterm_list):
     """
@@ -836,78 +542,6 @@ def height_of_sensor(elanem_list, elterm_list):
         float_list.append(missD)
     return float_list
 
-def r24h_total(hh_list, r24h_list):
-    """
-    This function makes a total list of precipitation past 24 hours. It depends on:
-        hh_list = HH24 = hour of the measurement
-        r24h_list = R_24H = total precipitation values in data.
-    """
-    float_list = []
-    for i in range(0, len(r24h_list)):
-        if hh_list[i] == 5:
-            float_list.append(r24h_list[i])
-        else:
-            float_list.append(missD)
-    return float_list
-
-def ground_data(key_list, hh_list, list1, list2):
-    """
-    This function chooses ground data from GROUND06 and GROUND, and modifies it.
-        If key_list includes key "GROUND06" and hh_list = HH24 is 6, the values of
-        GROUND06 (list2) are used. If not, then values of GROUND (list1) are used.
-    """
-    g = [1, 2, 4, 11, 11, 12, 13, 16, 17]
-    int_list = []
-    for i in range (0, len(hh_list)):
-        if hh_list[i] == 6 and 'GROUND06' in key_list:
-            ind = list2[i]
-            if 1 <= ind <= 9:
-                int_list.append(g[ind-1])
-            else:
-                int_list.append(ind)
-        else:
-            ind = list1[i]
-            if 1 <= ind <= 9:
-                int_list.append(g[ind-1])
-            else:
-                int_list.append(ind)
-    return int_list
-
-def snow_depth(snow_value, gr_value):
-    """
-    This function chooses a right value of snow depth. It depends on:
-        snow_value = snow depth in data
-        gr_value = ground value in data
-    """
-    value = snow_value
-    if snow_value == 0:
-        value = -0.01
-        if gr_value in (11, 12):
-            value = -0.02
-    elif snow_value == -0.01:
-        value = 0.0
-    return value
-
-def snow_depth_total(hh_list, key_list, gr_list, snow_list):
-    """
-    This function makes a total list of snow depth. It depends on:
-        hh_list = HH24 = hour of the measurement
-        key_list, if it includes values SNOW06 or SNOW18
-        gr_list = GR = ground data
-        snow_list = SNOW = [SNOW06, SNOW18, SNOW_AWS] = values of snow depth.
-    """
-    float_list = []
-    snow06_list = snow_list[0]
-    snow18_list = snow_list[1]
-    snow_aws_list = snow_list[2]
-    for i in range(0, len(hh_list)):
-        if 'SNOW06' in key_list and hh_list[i] == 5:
-            float_list.append(snow_depth(snow06_list[i], gr_list[i]))
-        elif 'SNOW18' in key_list and hh_list[i] == 17:
-            float_list.append(snow_depth(snow18_list[i], gr_list[i]))
-        else:
-            float_list.append(snow_depth(snow_aws_list[i], gr_list[i]))
-    return float_list
 
 def replication(ns, nr1_list, nr2_list):
     """
@@ -948,55 +582,12 @@ def instrument_type(ns):
         i = i + 1
     return float_list
 
-def time_significance(ns):
-    """
-    This function gives the total list of time significance.
-    The size of list depends on ns = NSUB = number of subsets.
-    """
-    int_list = []
-    i = 0
-    while i < ns:
-        int_list.append(2)
-        int_list.append(31)
-        i = i + 1
-    return int_list
 
-
-def wind_gust_direction(ns):
+def precipitation(str_value):
     """
-    This function gives the total list of direction of wind gust.
-    The size of list depends on ns = NSUB = number of subsets.
+    Function retuns value for precipitation with one decimal point.
     """
-    float_list = []
-    i = 0
-    while i < ns:
-        float_list.append(missD)
-        float_list.append(missD)
-        i = i + 1
-    return float_list
-
-def wind_gust_speed(list1, list2):
-    """
-    Function gives the total list of speed of wind gust. It depends on values in:
-        list1 = WG_10MIN
-        list2 = WG_1H_MAX
-    """
-    float_list = []
-    for i in range(0, len(list1)):
-        float_list.append(list1[i])
-        float_list.append(list2[i])
-    return float_list
-
-def precipitation(str_value): ?????????????? kato kuuluuko näin?
-    """
-    Function retuns value for precipitation. It depends on str_value = given data value.
-    """
-    value = str_value
-    if str_value == '0':
-        value = '-0.1'
-    elif str_value == '-1':
-        value = '0.0'
-    return float(value)
+    return round(float(str_value), 1)
 
 def make_missing(k_id):
     """
@@ -1073,3 +664,18 @@ def str2float(str_list, k_id):
         else:
             float_list.append(float(str_list[i]))
     return float_list
+
+def make_list(list_of_lists, n_sub):
+    """
+    This function gets list of lists as input
+    and it combines the lists to a result list
+    by taking the first element of every list, 
+    then the second, and so on..
+    """
+    result_list = []
+    
+    for sub in range (0, n_sub):
+        for l in list_of_lists:
+            result_list.appent(list_of_lists[l[sub]])
+    return result_list
+
