@@ -4,11 +4,7 @@ This module makes subset objects by different functions and Subset class.
 import sys
 from eccodes import CODES_MISSING_LONG as miss
 from eccodes import CODES_MISSING_DOUBLE as missD
-????????????????????????
-JAIT tanne 
-eli poista turhat parametrit 
-kato etta menee oikeat numerot kun asetetaan miss jutut, floatti vai intti 
-kato etta kooditaulukoissa tulee oikea miss arvo esim 63 15 3 mita naita nyt on 
+
 class Subset:
     """
     This class makes keyname objects with key names that are mostly used in synop
@@ -63,19 +59,19 @@ class Subset:
         self.WSI_LID = miss_char_list
         self.BLOCK_NUMBER = str2int(self.WMON, 64)
         self.STATION_NUMBER = str2int(self.WMON, 65)
-        # self.YYYY = str2int(miss_list, 63)
+        self.YYYY = str2int(miss_list, 63)
         self.R_YYYY = str2int(miss_list, 63)
         self.S20_YB = str2int(miss_list, 63)
         self.S20_YC = str2int(miss_list, 63)
-        # self.MM = str2int(miss_list, 27)
+        self.MM = str2int(miss_list, 27)
         self.R_MM = str2int(miss_list, 27)
         self.R_DD = str2int(miss_list, 21)
-        # self.HH24 = str2int(miss_list, 24)
+        self.HH24 = str2int(miss_list, 24)
         self.R_HH0 = str2int(miss_list, 24)
         self.R_HH6 = str2int(miss_list, 24)
-        # self.MI = str2int(miss_list, 26)
+        self.MI = str2int(miss_list, 26)
         self.R_MI = str2int(miss_list, 26)
-        # self.DD = str2int(miss_list, 21)
+        self.DD = str2int(miss_list, 21)
         self.S40_YX = str2int(miss_list, 21)
         self.S41_YN = str2int(miss_list, 21)
         self.S42_YAX = str2int(miss_list, 21)
@@ -86,21 +82,24 @@ class Subset:
         # self.P_ST = str2float(miss_list, 34)
         self.S11_P = str2float(miss_list, 34)  # hPA -> [PA]
         self.S21_P = str2float(miss_list, 34)  # hPA -> [PA]
-        self.P_ST = [self.S11_P, self.S21_P]
+        self.P_ST = make_list([self.S11_P, self.S21_P], self.NSUB)
         self.S12_P = str2float(miss_list, 34)  # hPA -> [PA]
         self.S22_P = str2float(miss_list, 34)  # hPA -> [PA]
-        self.P_SEA = [self.S12_P, self.S22_P]
-        self.S15_E = str2float(miss_list, 34)  # hPA? -> [PA]
-        self.S25_E = str2float(miss_list, 34)  # hPA? -> [PA]
+        self.P_SEA = make_list([self.S12_P, self.S22_P], self.NSUB)
+        self.S15_E = str2float(miss_list, 34)  # hPA -> [PA]
+        self.S25_E = str2float(miss_list, 34)  # hPA -> [PA]
         self.S16_R = str2float(miss_list, 40)  #  1.0 kg /m² ~ 1 mm 
         self.S26_R = str2float(miss_list, 40)  #  1.0 kg /m² ~ 1 mm 
         self.S16_RD = str2int(miss_list, 31)
         self.S16_NR = str2int(miss_list, 32)
         self.S26_NR = str2int(miss_list, 32)
-        self.S44_RX = str2float(miss_list, 44)
-        self.S17_S = str2int(miss_list, 42)  # [h] tulee valmiina tunneissa
-        self.S17_PS = str2int(miss_list, 42)  # [prosenteissa varmaan 0-100] HAV-sivuilla: s17_ps = s17_s / s27_s
-        self.S27_S = str2int(miss_list, 42)  # [h] tulee valmiina tunneissa
+        self.S44_RX = str2float(miss_list, 44) #  1.0 kg /m² ~ 1 mm 
+        self.S17_S = str2float(miss_list, 43)  # [h] tulee valmiina tunneissa
+        self.S17_PS = str2float(miss_list, 43)  # = S27_S?? [prosenteissa varmaan 0-100] HAV-sivuilla: s17_ps = s17_s / s27_s
+        self.S27_S = str2float(miss_list, 43)  # [h] tulee valmiina tunneissa
+        # ELi 17_S on kuukausi arv paisteelle
+        # ja  27_S on 30v vertailu arvo paisteelle
+        # ja  17_PS on paiste 30v kauteen verrattuna
         self.S13_T = str2float(miss_list, 50)
         self.S42_TAX = str2float(miss_list, 50)
         self.S43_TAN = str2float(miss_list, 50)
@@ -186,6 +185,8 @@ class Subset:
                 self.S41_YN = str2int(v_a[k_a.index(key)], 21)
             elif key == 'S42_YAX':
                 self.S42_YAX = str2int(v_a[k_a.index(key)], 21)
+            elif key == 'S43_YAN':
+                self.S43_YAN = str2int(v_a[k_a.index(key)], 21)
             elif key == 'S45_YFX':
                 self.S45_YFX = str2int(v_a[k_a.index(key)], 21)
             elif key == 'S44_YR':
@@ -199,9 +200,10 @@ class Subset:
             elif key == 'S22_P':
                 self.S22_P = str2float(v_a[k_a.index(key)], 34)
             elif key == 'S15_E':
-                self.S15_E = str2float(v_a[k_a.index(key)], 36)
+                self.S15_E = str2float(v_a[k_a.index(key)], 34)
+                print(self.S15_E)
             elif key == 'S25_E':
-                self.S25_E = str2float(v_a[k_a.index(key)], 36)            
+                self.S25_E = str2float(v_a[k_a.index(key)], 34)            
             elif key == 'S16_R':
                 self.S16_R = str2float(v_a[k_a.index(key)], 40)
             elif key == 'S26_R':
@@ -223,9 +225,11 @@ class Subset:
             elif key == 'S23_T':
                 self.S23_T = str2float(v_a[k_a.index(key)], 50)
             elif key == 'S13_ST':
-                self.S13_ST = str2float(v_a[k_a.index(key)], 50)        
+                self.S13_ST = str2float(v_a[k_a.index(key)], 50)  
+                print(self.S13_ST)      
             elif key == 'S23_ST':
-                self.S23_ST = str2float(v_a[k_a.index(key)], 50)  
+                self.S23_ST = str2float(v_a[k_a.index(key)], 50)
+                print(self.S23_ST)
             elif key == 'S14_TX':
                 self.S14_TX = str2float(v_a[k_a.index(key)], 50)
             elif key == 'S24_TX':
@@ -261,11 +265,11 @@ class Subset:
             elif key == 'S29_YS':
                 self.S29_YS = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S17_S':
-                self.S17_S = str2int(str2float(v_a[k_a.index(key)], 42), 42)
+                self.S17_S = str2float(v_a[k_a.index(key)], 43)
             elif key == 'S17_PS':
-                self.S17_PS = str2int(str2float(v_a[k_a.index(key)], 42), 42)
+                self.S17_PS = str2float(v_a[k_a.index(key)], 43)
             elif key == 'S27_S':
-                self.S27_S = str2int(str2float(v_a[k_a.index(key)], 42), 42)                            
+                self.S27_S = str2float(v_a[k_a.index(key)], 43)                           
             elif key == 'S20_YB':
                 self.S20_YB = get_times(v_a[k_a.index(key)], 1)
             elif key == 'S20_YC':
@@ -308,7 +312,7 @@ class Subset:
                 self.S39_V1 = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S39_V2':
                 self.S39_V2 = str2int(v_a[k_a.index(key)], 51)
-            elif key == '39_V3':
+            elif key == 'S39_V3':
                 self.S39_V3 = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S33_R01':
                 self.S33_R01 = str2int(v_a[k_a.index(key)], 51)
@@ -336,7 +340,7 @@ class Subset:
         self.YYYY = make_list([self.R_YYYY, self.S20_YB, self.S20_YC, self.S20_YB, self.S20_YC], self.NSUB)
         self.MM = make_list([self.R_MM, self.R_MM, self.R_MM], self.NSUB)
         self.DD = make_list([self.R_DD, self.S40_YX, self.S41_YN, self.S42_YAX, self.S43_YAN, self.S45_YFX, self.R_DD, self.S44_YR, self.R_DD, self.R_DD], self.NSUB)
-        self.HH24 = make_list([self.R_HH0, self.R_HH6, self.R_HH0, self.R_HH6])
+        self.HH24 = make_list([self.R_HH0, self.R_HH6, self.R_HH0, self.R_HH6], self.NSUB)
         self.MI = self.R_MI
         self.NM = days_in_month_list(self.R_YYYY, self.R_MM)
         self.UTC_DIFF = get_times(self.R_MM, 4)
@@ -345,10 +349,10 @@ class Subset:
             self.S19_MS, self.S19_MR,
             self.S28_YP, self.S28_YT, self.S28_YTX,self.S29_YE, self.S29_YR, self.S29_YS,self.S28_YTX, self.S28_YTX], self.NSUB)
         self.TNRA = make_list([self.S38_F10, self.S38_F20, self.S38_F30, self.S32_TX0,
-             self.S30_T25, self.S30_T30, self.S31_T35, self.S31_T40, self.S32_TN0,
-             self.S36_S00, self.S36_S01, self.S37_S10, self.S37_S50
-             self.S39_V1, self.S39_V2, self.S39_V3, miss, miss,
-             self.S33_R01, self.S33_R05, self.S34_R10, self.S34_R50, self.S35_R100, self.S35_R150], self.NSUB)
+            self.S30_T25, self.S30_T30, self.S31_T35, self.S31_T40, self.S32_TN0,
+            self.S36_S00, self.S36_S01, self.S37_S10, self.S37_S50,
+            self.S39_V1, self.S39_V2, self.S39_V3, str2int(miss_list, 51), str2int(miss_list, 51),
+            self.S33_R01, self.S33_R05, self.S34_R10, self.S34_R50, self.S35_R100, self.S35_R150], self.NSUB)
         self.P_ST = make_list([self.S11_P, self.S21_P], self.NSUB)
         self.P_SEA = make_list([self.S12_P, self.S22_P], self.NSUB)
         self.T = make_list([self.S13_T, self.S42_TAX, self.S43_TAN, self.S23_T], self.NSUB)
@@ -356,16 +360,16 @@ class Subset:
         self.TMIN = make_list([self.S14_TN, self.S24_TN], self.NSUB)
         self.TMEAN = make_list([self.S13_ST, self.S23_ST], self.NSUB)
         self.E = make_list([self.S15_E, self.S25_E], self.NSUB)
-        self.SUND = make_list([self.S17_S, self.S17_PS, self.S27_S], self.NSUB)
+        self.SUND = make_list([self.S17_S, sunshine_pros(self.S17_S, self.S27_S), self.S27_S], self.NSUB)
         # self.DEL = replication(self.NSUB, self.NR1, self.NR2)
         self.R_AC = make_list([self.S16_R, self.S26_R], self.NSUB)
         self.R_N = make_list([self.S16_NR, self.S26_NR], self.NSUB)
-        self.N_MISS = [1,2,4,7,8,6,5,1,2,3,4,5,6,7,8]
+        self.N_MISS = make_list([1,2,4,7,8,6,5,1,2,3,4,5,6,7,8], self.NSUB)
         self.SENSOR = height_of_sensor(self.ELANEM, self.ELTERM)
         self.INSTRUMENT = instrument_type(self.NSUB)
         self.FS = first_order_statistics(self.NSUB)
         self.IND = observing_method_extreme_temperatures(self.NSUB)
-        self.CND = [0,1,2,3,4,5,6,7,8,16,17,18,19,20,21,22,23,24,10, 11, 12, 13, 14, 15]
+        self.CND = make_list([0,1,2,3,4,5,6,7,8,16,17,18,19,20,21,22,23,24,10, 11, 12, 13, 14, 15], self.NSUB)
 
 
 # 6.
@@ -431,20 +435,20 @@ def get_times(time_list, n):
         time = time_list[i]
         if n == 0:
             times.append(int(time[:4]))
-        else if n == 1:
+        elif n == 1:
             times.append(int(time))
-        else if n == 2:
+        elif n == 2:
             times.append(int(time[5:7]))
-        else if n == 3:
+        elif n == 3:
             times.append(int(time[-2:]))
-        else if n == 4:
+        elif n == 4:
             if int(time) < 4:
                 times.append(-2)
-            else if int(time) > 10:
+            elif int(time) > 10:
                 times.append(-2)
-            else
+            else:
                 times.append(-3)
-        else
+        else:
             times.append(miss)
 
     return times
@@ -485,6 +489,32 @@ def days_in_month_list(y_list, m_list):
     for i in range (0, len(m_list)):
         nm_list.append(days_in_month(int(y_list[i]), int(m_list[i])))
     return nm_list
+
+def sunshine_pros(s_month_list, s_30v_list):
+    """
+    the percentage of the normal that value represents shall be reported using
+    Total sunshine (0 14 033). Any missing element shall be reported as a missing value.
+    Notes:
+        (1) If the percentage of the normal is 1% or less but greater than 0, Total sunshine
+            0 14 033 shall be set to 1.
+        (2) If the normal is zero hours, Total sunshine 0 14 033 shall be set to 510.
+        (3) If the normal is not defined, Total sunshine 0 14 033 shall be set to missing.
+    """
+    s_pros_list = []
+    for s in range(0, len(s_month_list)):
+        if float(s_30v_list[s]) == missD or float(s_month_list[s]) == missD:
+            s_pros_list.append(missD)
+        else:
+            if float(s_30v_list[s]) == 0.0:
+                s_pros_list.append(510)
+            else:
+                s_pros = 100* float(s_month_list[s]) / float(s_30v_list[s])
+                if 0.0 <= s_pros and s_pros <= 1.0:
+                    s_pros_list.append(1)
+                else:
+                    s_pros_list.append(int(s_pros))
+
+    return s_pros_list
 
 def first_order_statistics(ns):
     """
@@ -671,11 +701,16 @@ def make_list(list_of_lists, n_sub):
     and it combines the lists to a result list
     by taking the first element of every list, 
     then the second, and so on..
+    If a single list is provided, it will be treated as a list of lists with one list.
     """
+    # Check if list_of_lists is a list of integers or other non-list elements
+    if list_of_lists and not any(isinstance(item, list) for item in list_of_lists):
+        # Wrap the single list in another list to make it a list of lists
+        list_of_lists = [list_of_lists]
     result_list = []
     
     for sub in range (0, n_sub):
         for l in list_of_lists:
-            result_list.appent(list_of_lists[l[sub]])
+            result_list.append(l[sub])
     return result_list
 
