@@ -267,11 +267,11 @@ def bufr_encode(ibufr, subs):
     codes_set(ibufr, 'observedData', 1)
     codes_set(ibufr, 'numberOfSubsets', subs.NSUB)
     codes_set(ibufr, 'compressedData', 0)
-    codes_set(ibufr, 'typicalYear', max(set(subs.YYYY), key = subs.YYYY.count))
-    codes_set(ibufr, 'typicalMonth', max(set(subs.MM), key = subs.MM.count))
-    codes_set(ibufr, 'typicalDay', max(set(subs.DD), key = subs.DD.count))
-    codes_set(ibufr, 'typicalHour', max(set(subs.HH24), key = subs.HH24.count))
-    codes_set(ibufr, 'typicalMinute', max(set(subs.MI), key = subs.MI.count))
+    codes_set(ibufr, 'typicalYear', max(set(subs.R_YYYY), key = subs.R_YYYY.count))
+    codes_set(ibufr, 'typicalMonth', max(set(subs.R_MM), key = subs.R_MM.count))
+    codes_set(ibufr, 'typicalDay', max(set(subs.R_DD), key = subs.R_DD.count))
+    codes_set(ibufr, 'typicalHour', max(set(subs.R_HH0), key = subs.R_HH0.count))
+    codes_set(ibufr, 'typicalMinute', max(set(subs.R_MI), key = subs.R_MI.count))
     codes_set(ibufr, 'typicalSecond', 0)
     # codes_set_array(ibufr, 'inputDelayedDescriptorReplicationFactor', subs.DEL)
     # codes_set(ibufr, 'unexpandedDescriptors', 307073)
@@ -297,10 +297,10 @@ def bufr_encode(ibufr, subs):
     # 307071 Monthly values of a land station: (data of CLIMAT Sections 0, 1, 3 and 4)
         # 301090: 301004, 301011, 301012, 301021, 7030, 7031
             # 301004: 1001, 1002, 1015, 2001:
-                #    block number, station number, station name, station type
-    # Tasta loppuun ????
+            # block number, station number, station name, station type
     codes_set_array(ibufr, 'blockNumber', subs.BLOCK_NUMBER)
     codes_set_array(ibufr, 'stationNumber', subs.STATION_NUMBER)
+
     # codes_set_array is not for string values: codes_set_string_array, codes_get_string_array
     for i in range(0, len(subs.STATION_NAME)):
         key = '#'+str(i+1)+'#stationOrSiteName'
@@ -314,10 +314,9 @@ def bufr_encode(ibufr, subs):
                 # month (0 04 002), day (0 04 003) and hour (0 04 004), minute (0 04 005) of
                 # beginning of the month for which the monthly values are reported. Day (0 04 003)
                 # shall be set to 1 and both hour (0 04 004) and minute (0 04 005) shall be set to 0.
-    # codes_set_array(ibufr, 'year', subs.YYYY) # REPORT_MONTH=2024-11-01
-    # codes_set_array(ibufr, 'month', subs.MM)
-    # scodes_set_array(ibufr, 'day', subs.DD) # aseta 1
-    # codes_set_array(ibufr, 'hour', subs.HH24) # aseta 0
+                # REPORT_MONTH=2024-11-01 : YYYY, MM, DD
+                # HH24 = 0
+
     codes_set_array(ibufr, 'minute', subs.MI) # Aseta 0
 
             # 301021: 5001, 6001: latitude, longitude
@@ -330,10 +329,10 @@ def bufr_encode(ibufr, subs):
 
     # 4074 Short time period or displacement (see Note 3) = UTC – LT
         #1#timePeriod
-    # codes_set(ibufr, 'timePeriod', subs.TP) # -2
+        # TP = -2
     # 4023 Time period or displacement Number of days in the month.
         #2#timePeriod
-    # codes_set(ibufr, 'timePeriod', subs.TP) # NM
+        # TP = NM
 
     # Monthly mean values of pressure, temperature, extreme temperatures and vapour pressure:
         # 8023 First-order statistics = 4 Mean value
@@ -342,14 +341,14 @@ def bufr_encode(ibufr, subs):
                 # represent mean values of the elements (pressure, pressure reduced to mean sea
                 # level or geopotential height, temperature, extreme temperatures and vapour
                 # pressure) averaged over the one-month period.
-    # codes_set(ibufr, 'firstOrderStatistics', subs.FS) # 4
+                # FS = 4
 
         # 10004 Pressure
             #1#nonCoordinatePressure
-    # codes_set_array(ibufr, 'nonCoordinatePressure', subs.P_ST) #  S11_P
+        # P_ST =  S11_P
         # 10051 Pressure reduced to mean sea level
             #1#pressureReducedToMeanSeaLevel
-    # codes_set_array(ibufr, 'pressureReducedToMeanSeaLevel', subs.P_SEA) # S12_P
+        # P_SEA = S12_P
                 # Monthly data (with the exception of precipitation data) are recommended to be
                 # reported for one-month period, corresponding to the local time (LT) month
                 # [Handbook on CLIMAT and CLIMAT TEMP Reporting (WMO/TD-No.1188)]. In
@@ -371,11 +370,11 @@ def bufr_encode(ibufr, subs):
                 # metre).
                 # This datum represents the actual height of temperature and humidity sensors
                 # above ground at the point where the sensors are located
-        # codes_set_array(ibufr, 'heightOfSensorAboveLocalGroundOrDeckOfMarinePlatform', subs.SENSOR) # ELTERM
+            # SENSOR = ELTERM
 
         # 12101 Temperature/air temperature
             #1#airTemperature
-        # codes_set_array(ibufr, 'airTemperature', subs.T) # S13_T
+            # T = S13_T
             # Monthly mean value of temperature shall be reported using 0 12 101
             # (Temperature/air temperature) in kelvin (with precision in hundredths of a kelvin)
             # Temperature data shall be reported with precision in hundredths
@@ -389,14 +388,13 @@ def bufr_encode(ibufr, subs):
                 # This datum shall be set to 1 (maximum/minimum thermometers) or to 2
                 # (automated instruments) or to 3 (thermograph) to indicate observing method for
                 # extreme temperatures.
-        # codes_set(ibufr, 'indicatorToSpecifyObservingMethodForExtremeTemperatures', subs.IND) # 1..3 laitetaan miss=15
+            # IND = miss=15
 
         # 4051 Principal time of daily reading of maximum temperature
             #1#principalTimeOfDailyReadingOfMaximumTemperature
         # 12118 Maximum temperature at height specified, past 24 hours
             #1#maximumTemperatureAtHeightSpecifiedPast24Hours
-            # codes_set(ibufr, 'principalTimeOfDailyReadingOfMaximumTemperature',?)
-        # codes_set(ibufr, 'maximumTemperatureAtHeightSpecifiedPast24Hours', subs.TMAX) # S14_TX
+            # TMAX = S14_TX
                 # The monthly mean value of maximum temperature shall be reported using 0 12 118
                 # (Maximum temperature at height specified, past 24 hours). The height is specified by
                 # the preceding entry 0 07 032. Principal time of daily reading of maximum
@@ -407,24 +405,23 @@ def bufr_encode(ibufr, subs):
             #1#principalTimeOfDailyReadingOfMinimumTemperature
         # 12119 Minimum temperature at height specified, past 24 hours
             #1#minimumTemperatureAtHeightSpecifiedPast24Hours
-            # codes_set(ibufr, 'principalTimeOfDailyReadingOfMinimumTemperature',?)
-        # codes_set(ibufr, 'minimumTemperatureAtHeightSpecifiedPast24Hours', subs.TMIN) # S14_TN
+            # TMIN = S14_TN
                 # Samat ohjeet ku maksissa
             
         # 13004 Vapour pressure
             #1#vapourPressure
-            # codes_set(ibufr, 'vapourPressure', subs.E) # 15_E
+            # E = S15_E
                 # pascals (with precision in tens of pascals)
 
         # 8023 First-order statistics Set to missing
             #2#firstOrderStatistics
                 # This datum shall be set to missing to indicate that the following entries do not
                 # represent the monthly mean values.
-            # codes_set(ibufr, 'firstOrderStatistics', subs.FS) # miss
+            # FS = miss
 
         # 12151 Standard deviation of daily mean temperature
             #1#dailyMeanTemperatureStandardDeviation
-            # codes_set(ibufr, 'dailyMeanTemperatureStandardDeviation', subs.TMEAN) # S13_ST
+            # TMEAN = S13_ST
                 # Standard deviation of daily mean temperature (0 12 151) shall be reported in
                 # kelvin (with precision in hundredths of a kelvin);
 
@@ -434,14 +431,11 @@ def bufr_encode(ibufr, subs):
         # 102005 Replicate 2 descriptors 5 times
         # 8050 Qualifier for number of missing values in calculation of statistic = 1 Pressure, = 2 Temperature, = 4 Vapour pressure, = 7 Maximum temperature, = 8 Minimum temperature
             #1..5#qualifierForNumberOfMissingValuesInCalculationOfStatistic
-        # lista = [1, 2, 4, 7, 8]
-        # codes_set_array(ibufr, 'qualifierForNumberOfMissingValuesInCalculationOfStatistic', subs.N_MISS)
+            # N_MISS = 1, 2, 4, 7, 8
 
         # 8020 Total number of missing entities (with respect to accumulation or average) Days
             #1..5#totalNumberOfMissingEntitiesWithRespectToAccumulationOrAverage
-        #   [S18_MP, S18_MT, S19_ME, S18_MTX, S18_MTN]
-        # codes_set(ibufr, 'totalNumberOfMissingEntitiesWithRespectToAccumulationOrAverage', subs.TOT_MISS)
-
+            # TOT_MISS = S18_MP, S18_MT, S19_ME, S18_MTX, S18_MTN
                 # Number of days in the month for which values are missing shall be reported using
                 # Total number of missing entities (0 08 020) being preceded by Qualifier for
                 # number of missing values in calculation of statistic (0 08 050) in each of the
@@ -458,11 +452,10 @@ def bufr_encode(ibufr, subs):
     # Sunshine duration
         # 14032 Total sunshine
             #1#totalSunshine
+            # SUND = S17_S 
         # 14033 Total sunshine
             #2#totalSunshine
-        #codes_set(ibufr, 'totalSunshine', S17_S)
-        #codes_set(ibufr, 'totalSunshine', S17_PS)
-        # codes_set_array(ibufr, 'totalSunshine', subs.SUND)
+            # SUND = S17_S / S27_S = jonka pitais olla S17_PS, mutta ei oo, koska S17_PS = S27_S 
                 # The monthly values of total duration of sunshine shall be reported in hours using
                 # Total sunshine (0 14 032) and the percentage of the normal that that value
                 # represents shall be reported using Total sunshine (0 14 033). Any missing
@@ -474,12 +467,11 @@ def bufr_encode(ibufr, subs):
                 # (3) If the normal is not defined, Total sunshine 0 14 033 shall be set to missing.
         # 8050 Qualifier for number of missing values in calculation of statistic = 6 Sunshine duration
             #6#qualifierForNumberOfMissingValuesInCalculationOfStatistic
-            # lista = 6
-        # codes_set(ibufr, 'qualifierForNumberOfMissingValuesInCalculationOfStatistic', subs.N_MISS)
+            # N_MISS = 6
 
         # 8020 Total number of missing entities (with respect to accumulation or average) Days
             #6#totalNumberOfMissingEntitiesWithRespectToAccumulationOrAverage
-        # codes_set(ibufr, 'totalNumberOfMissingEntitiesWithRespectToAccumulationOrAverage', subs.TOT_MISS) #S19_MS
+            # TOT_MISS = S19_MS
                 # Number of days in the month for which sunshine data are missing shall be
                 # reported using Total number of missing entities (0 08 020) being preceded by
                 # Qualifier for number of missing values in calculation of statistic (0 08 050) set to 6
@@ -489,16 +481,14 @@ def bufr_encode(ibufr, subs):
         # 102018 Replicate 2 descriptors 18 times
         # 8052 Condition for which number of days of occurrence follows
             #1..18#conditionForWhichNumberOfDaysOfOccurrenceFollows
-            # lista = [0,1,2,3,4,5,6,7,8,16,17,18,19,20,21,22,23,24]
-        # codes_set_array(ibufr, 'conditionForWhichNumberOfDaysOfOccurrenceFollows', subs.CND)
+            # CND = 0,1,2,3,4,5,6,7,8,16,17,18,19,20,21,22,23,24
 
         # 8022 Total number (with respect to accumulation or average) Days
             #1..18#totalNumberWithRespectToAccumulationOrAverage
-            # lista = [S38_F10, S38_F20, S38_F30, S32_TX0,
-            #  S30_T25, S30_T30, S31_T35, S31_T40, S32_TN0,
-            #  S36_S00, S36_S01, S37_S10, S37_S50
-            #  S39_V1, S39_V2, S39_V3, miss, miss]
-        # codes_set_array(ibufr, 'totalNumberWithRespectToAccumulationOrAverage', subs.TNRA)
+            # TNRA = S38_F10, S38_F20, S38_F30, S32_TX0,
+            #        S30_T25, S30_T30, S31_T35, S31_T40, S32_TN0,
+            #        S36_S00, S36_S01, S37_S10, S37_S50
+            #        S39_V1, S39_V2, S39_V3, miss, miss
                 # Number of days in the month with parameters beyond certain thresholds and with
                 # thunderstorm and hail shall be reported using Total number (0 08 022) being
                 # preceded by Condition for which number of days of occurrence follows (0 08 052)
@@ -540,14 +530,14 @@ def bufr_encode(ibufr, subs):
                 # shall be reported in metres (with precision in hundredths of a metre).
                 # This datum represents the actual height of temperature sensor above ground at
                 # the point where the sensor is located.
-        # codes_set_array(ibufr, 'heightOfSensorAboveLocalGroundOrDeckOfMarinePlatform', subs.SENSOR) #  ELTERM
+            # SENSOR = ELTERM
         # 8053 Day of occurrence qualifier = 0 On 1 day only, = 1 On 2 or more days
             #1#dayOfOccurrenceQualifier
-            # codes_set(ibufr, 'dayOfOccurrenceQualifier', 0tai1) # 3 = miss
+            # 0 or 1 or 3 = miss
 
         # 4003 Day
             #2#day
-        # codes_set(ibufr, 'day', subs.DD) # S40_YX
+            # DD = S40_YX
         # 12152 Highest daily mean temperature  #1#highestDailyMeanTemperature
                 # The day on which the highest daily mean temperature occurred shall be reported
                 # using Day (0 04 003). If the highest daily mean temperature occurred on only one
@@ -559,11 +549,9 @@ def bufr_encode(ibufr, subs):
         # 8053 Day of occurrence qualifier = 0 On 1 day only, = 1 On 2 or more days
             #2#dayOfOccurrenceQualifier
 
-    ########################################################################################################3
-
         # 4003 Day
             #3#day
-        # codes_set(ibufr, 'day', subs.DD) # S41_YN
+            # DD = S41_YN
                 # The day on which the lowest daily mean temperature occurred shall be reported
                 # using Day (0 04 003). If the lowest daily mean temperature occurred on only one
                 # day, the preceding entry 0 08 053 (Day of occurrence qualifier) shall be set to 0.
@@ -575,11 +563,9 @@ def bufr_encode(ibufr, subs):
         # 8053 Day of occurrence qualifier = 0 On 1 day only, = 1 On 2 or more days  
             #3#dayOfOccurrenceQualifier
 
-    #####################################################################################
-
         # 4003 Day
             #4#day
-        # codes_set(ibufr, 'day', subs.DD) # S42_YAX
+            # DD = S42_YAX
                 # The day on which the highest air temperature occurred shall be reported using
                 # Day (0 04 003). If the highest air temperature occurred on only one day, the
                 # preceding entry 0 08 053 (Day of occurrence qualifier) shall be set to 0. If the
@@ -591,19 +577,17 @@ def bufr_encode(ibufr, subs):
                 # hundredths of a kelvin);
         # 8023 First-order statistics = 2 Maximum value
             #3#firstOrderStatistics
-        # codes_set(ibufr, 'firstOrderStatistics', subs.FS) # 2
+            # FS = 2
         
         # 12101 Temperature/air temperature
             #2#airTemperature
-        # codes_set(ibufr, 'airTemperature', subs.T) # S42_TAX
+            # T = S42_TAX
         # 8053 Day of occurrence qualifier = 0 On 1 day only, = 1 On 2 or more days
             #4#dayOfOccurrenceQualifier
 
-    #####################################################################################################
-
         # 4003 Day
             #5#day
-        # codes_set(ibufr, 'day', subs.DD) # S43_YAN 
+            # DD = S43_YAN 
                 # The day on which the lowest air temperature occurred shall be reported using
                 # Day (0 04 003). If the lowest air temperature occurred on only one day, the
                 # preceding entry 0 08 053 (Day of occurrence qualifier) shall be set to 0. If the
@@ -615,17 +599,14 @@ def bufr_encode(ibufr, subs):
                 # hundredths of a kelvin)
         # 8023 First-order statistics = 3 Minimum value
             #4#firstOrderStatistics
-        # codes_set(ibufr, 'firstOrderStatistics', subs.FS) # 3
+            # FS = 3
         # 12101 Temperature/air temperature
             #3#airTemperature
-        # codes_set(ibufr, 'airTemperature', subs.T) # S43_TAN
-
-    ##########################################################################################
+            # T = S43_TAN
 
         # 8023 First-order statistics Set to missing 
             #5#firstOrderStatistics
-            # codes_set(ibufr, 'firstOrderStatistics', subs.FS) # miss
-    #############################################################################################
+            # FS = miss
 
         # 7032 Height of sensor above local ground (or deck of marine platform) (see Note 4)
             #4#heightOfSensorAboveLocalGroundOrDeckOfMarinePlatform
@@ -633,7 +614,7 @@ def bufr_encode(ibufr, subs):
                 # reported in metres (with precision in hundredths of a metre).
                 # This datum represents the actual height of wind sensors above ground at the
                 # point where the sensors are located.
-        # codes_set_array(ibufr, 'heightOfSensorAboveLocalGroundOrDeckOfMarinePlatform', subs.SENSOR) # ELANEM
+            # SENSOR = ELANEM
         # 2002 Type of instrumentation for wind measurement
             #1#instrumentationForWindMeasurement
                 # This datum shall be used to specify whether the wind speed was measured by
@@ -647,12 +628,9 @@ def bufr_encode(ibufr, subs):
         # 8053 Day of occurrence qualifier = 0 On 1 day only, = 1 On 2 or more days
             #5#dayOfOccurrenceQualifier
 
-    #################################################################################################
-
-
         # 4003 Day
             #6#day
-        # codes_set(ibufr, 'day', sub.DD) # S45_YFX
+            # DD = S45_YFX
         # 11046 Maximum instantaneous wind speed 
             #1#maximumInstantaneousWindSpeed
     codes_set_array(ibufr, 'maximumInstantaneousWindSpeed', subs.S45_FX)
@@ -668,15 +646,13 @@ def bufr_encode(ibufr, subs):
                 # 0 11 046 (Maximum instantaneous wind speed) in metres per second (with
                 # precision in tenths of a metre per second).
 
-    ##############################################################################################
-
     # Precipitation
         # 4003 Day (see Note 5) = 1
             #7#day
-        # codes_set(ibufr, 'day', subs.DD) # 1
+            # DD = 1
         # 4004 Hour (see Note 5) = 6
             #2#hour
-        # codes_set(ibufr, 'hour', subs.HH24) # 6
+            # HH24 = 6
                 # Day (0 04 003) and hour (0 04 004) of the beginning of the one-month period for
                 # monthly precipitation data are reported. Day (0 04 003) shall be set to 1 and hour
                 # (0 04 004) shall be set to 6.
@@ -687,7 +663,7 @@ def bufr_encode(ibufr, subs):
 
         # 4023 Time period or displacement (see Note 5) Number of days in the month
             #3#timePeriod
-        # codes_set(ibufr, 'timePeriod', self.TP) # NM
+            # TP = NM
                 # Time period (0 04 023) represents the number of days in the month for which the
                 # monthly mean data are reported, and shall be expressed as a positive value in
                 # days.
@@ -702,7 +678,7 @@ def bufr_encode(ibufr, subs):
 
         # 13060 Total accumulated precipitation
             #1#totalAccumulatedPrecipitation
-        # codes_set(ibufr, 'totalAccumulatedPrecipitation', subs.R_AC) # S16_R
+            # R_AC = S16_R
                 # Total accumulated precipitation (0 13 060) which has fallen during the month
                 # shall be reported in kilograms per square metre (with precision in tenths of a
                 # kilogram per square metre).
@@ -731,32 +707,29 @@ def bufr_encode(ibufr, subs):
                 # Number of days in the month with precipitation equal to or greater than
                 # 1 kilogram per square metre shall be reported using 0 04 053 (Number of days in
                 # the month with precipitation equal to or greater than 1 mm).
-        # codes_set(ibufr, 'numberOfDaysWithPrecipitationEqualToOrMoreThan1Mm', subs.R_N) # S16_NR
+            # R_N = S16_NR
 
         # 8050 Qualifier for number of missing values in calculation of statistic = 5 Precipitation
             #7#qualifierForNumberOfMissingValuesInCalculationOfStatistic
-        #     lista = 5
-        # codes_set(ibufr, 'qualifierForNumberOfMissingValuesInCalculationOfStatistic', subs.N_MISS)
+            # N_MISS = 5
         # 8020 Total number of missing entities (with respect to accumulation  or average) Days
             #7#totalNumberOfMissingEntitiesWithRespectToAccumulationOrAverage
-        # codes_set(ibufr, 'totalNumberOfMissingEntitiesWithRespectToAccumulationOrAverage', subs.TOT_MISS) # S19_MR
+            # TOT_MISS = S19_MR
                 # Number of days in the month for which precipitation is missing shall be reported
                 # using Total number of missing entities (0 08 020) being preceded by Qualifier for
                 # number of missing values in calculation of statistic (0 08 050) set to 5
                 # (precipitation).
-        
-    # ###############################################################################################################
 
     # Number of days of occurrence
         # 102006 Replicate 2 descriptors 6 times
         # 8052 Condition for which number of days of occurrence follows
             #19..24#conditionForWhichNumberOfDaysOfOccurrenceFollows
-        # lista = [10, 11, 12, 13, 14, 15]
-    # muka vaara koko .. ??? codes_set_array(ibufr, 'conditionForWhichNumberOfDaysOfOccurrenceFollows', subs.CND)
+        # subs.CND = 10, 11, 12, 13, 14, 15
+    codes_set_array(ibufr, 'conditionForWhichNumberOfDaysOfOccurrenceFollows', subs.CND)
 
         # 8022 Total number (with respect to accumulation or average) Days
             #19..24#totalNumberWithRespectToAccumulationOrAverage
-        # lista = [S33_R01, S33_R05, S34_R10, S34_R50, S35_R100, S35_R150]
+            # = S33_R01, S33_R05, S34_R10, S34_R50, S35_R100, S35_R150
     codes_set_array(ibufr, 'totalNumberWithRespectToAccumulationOrAverage', subs.TNRA)
 
                 # Number of days in the month with precipitation beyond certain thresholds shall be
@@ -778,7 +751,7 @@ def bufr_encode(ibufr, subs):
             #7#dayOfOccurrenceQualifier
         # 4003 Day
             #8#day
-        # codes_set(ibufr, 'day', subs.DD) # S44_YR
+            # DD = 44_YR
         # 13052 Highest daily amount of precipitation
             #1#highestDailyAmountOfPrecipitation
     codes_set_array(ibufr, 'highestDailyAmountOfPrecipitation', subs.S44_RX)
@@ -799,10 +772,10 @@ def bufr_encode(ibufr, subs):
     # 307072 Monthly normals for a land station: (data of CLIMAT Section 2)
         # 4001 Year Beginning of the reference period
             #2#year
-            # codes_set(ibufr, 'year', subs.YYYY) # oletan, kysy S20_YB
+            # YYYY = S20_YB
         # 4001 Year Ending of the reference period
             #3#year
-            # codes_set(ibufr, 'year', subs.YYYY) # oletan, kysy S20_YC
+            # YYYY = S20_YC
                 # Reference period for calculation of the normal values of the elements shall be
                 # reported using two consecutive entries 0 04 001 (Year). The first 0 04 001 shall
                 # express the year of beginning of the reference period and the second 0 04 001
@@ -811,19 +784,19 @@ def bufr_encode(ibufr, subs):
                 # specific period defined by the Technical Regulations (WMO-No. 49)
         # 4002 Month
             #2#month
-            # codes_set(ibufr, 'month', subs.MM) # kai_se_mika_muuallakin?
+            # MM = Reposted month
         # 4003 Day (see Note 3) = 1
             #9#day
-            # codes_set(ibufr, 'day', subs.DD) # 1
+            # DD = 1
         # 4004 Hour (see Note 3) = 0
             #3#hour
-            # codes_set(ibufr, 'hour', subs.HH24) # 0
+            # HH24 = 0
         # 4074 Short time period or displacement (see Note 3) = UTC – LT
             #4#timePeriodc
-            # codes_set(ibufr, 'timePeriod', subs.TP) # -2
+            # TP = -2
         # 4022 Time period or displacement = 1
             #5#timePeriod
-            # codes_set(ibufr, 'timePeriod', subs.TP) # 1
+            # TP = 1
                 # The one-month period for which the normal values are reported shall be specified
                 # by month (0 04 002), day (0 04 003) being set to 1, hour (0 04 004) being set to 0,
                 # short time displacement (0 04 074) being set to (UTC – LT) and time period
@@ -834,7 +807,7 @@ def bufr_encode(ibufr, subs):
 
         # 8023 First-order statistics = 4 Mean value
             #6#firstOrderStatistics
-            # codes_set(ibufr, 'firstOrderStatistics', subs.FS) # 4
+            # FS = 4
                 # This datum shall be set to 4 (mean value) to indicate that the following entries
                 # represent mean values of the elements (pressure, pressure reduced to mean sea
                 # level or geopotential height, temperature, extreme temperatures, vapour pressure,
@@ -894,7 +867,7 @@ def bufr_encode(ibufr, subs):
             #2#dailyMeanTemperatureStandardDeviation
                 # Normal value of standard deviation of daily mean temperature shall be reported
                 # using 0 12 151 in kelvin
-    # Täs outo, ei pidä kelvineistä ??? codes_set_array(ibufr, 'dailyMeanTemperatureStandardDeviation', subs.TMEAN) #  S23_ST
+    codes_set_array(ibufr, 'dailyMeanTemperatureStandardDeviation', subs.TMEAN) #  S23_ST
 
         # 7032 Height of sensor above local ground (or deck of marine platform) Set to missing
             #8#heightOfSensorAboveLocalGroundOrDeckOfMarinePlatform # miss
@@ -918,10 +891,10 @@ def bufr_encode(ibufr, subs):
             # codes_set(ibufr, 'firstOrderStatistics', subs.FS) # miss
         # 4001 Year Beginning of the reference period
             #4#year
-            # codes_set(ibufr, 'year', subs.YYYY) # S20_YB oletan, kysy
+            # YYYY = S20_YB
         # 4001 Year Ending of the reference period
             #5#year
-    codes_set_array(ibufr, 'year', subs.YYYY) # S20_YC oletan, kysy
+    codes_set_array(ibufr, 'year', subs.YYYY) # S20_YC
                 # Reference period for calculation of the normal values of precipitation shall be
                 # reported using two consecutive entries 0 04 001 (Year). The first 0 04 001 shall
                 # express the year of beginning of the reference period and the second 0 04 001
@@ -929,7 +902,7 @@ def bufr_encode(ibufr, subs):
 
         # 4002 Month
             #3#month
-    codes_set_array(ibufr, 'month', subs.MM) # sama kaikissa kolmessa, oletan, kysy
+    codes_set_array(ibufr, 'month', subs.MM) # Reported month
         # 4003 Day (see Note 5) = 1
             #10#day
     codes_set_array(ibufr, 'day', subs.DD) # 1
@@ -950,7 +923,7 @@ def bufr_encode(ibufr, subs):
                 # This datum shall be set to 4 (mean value) to indicate that the following entries
                 # represent mean values of precipitation data, averaged over the reference period
                 # specified in Regulation
-            # codes_set(ibufr, 'firstOrderStatistics', subs.FS) # 4 
+                # FS = 4 
 
         # 13060 Total accumulated precipitation
             #2#totalAccumulatedPrecipitati
@@ -972,28 +945,22 @@ def bufr_encode(ibufr, subs):
             #9#firstOrderStatistics
     codes_set_array(ibufr, 'firstOrderStatistics', subs.FS) # miss
         # 102008 Replicate 2 descriptors 8 times
-        # 8050 Qualifier for number of missing values in calculation of statistic (see Note 6) = 1 Pressure, = 2 Temperature, = 3 Extreme temperature, = 4 Vapour pressure, = 5 Precipitation, = 6 Sunshine duration,  = 7 Maximum temperature, = 8 Minimum temperature
+        # 8050 Qualifier for number of missing values in calculation of statistic (see Note 6)
+        # = 1 Pressure, = 2 Temperature, = 3 Extreme temperature, = 4 Vapour pressure, = 5 Precipitation,
+        # = 6 Sunshine duration,  = 7 Maximum temperature, = 8 Minimum temperature
             #8..15#qualifierForNumberOfMissingValuesInCalculationOfStatistic
-            # codes_set(ibufr, 'qualifierForNumberOfMissingValuesInCalculationOfStatisti', 1)
-            # codes_set(ibufr, 'qualifierForNumberOfMissingValuesInCalculationOfStatisti', 2)
-            # codes_set(ibufr, 'qualifierForNumberOfMissingValuesInCalculationOfStatisti', 3)
-            # codes_set(ibufr, 'qualifierForNumberOfMissingValuesInCalculationOfStatisti', 4)
-            # codes_set(ibufr, 'qualifierForNumberOfMissingValuesInCalculationOfStatisti', 5)
-            # codes_set(ibufr, 'qualifierForNumberOfMissingValuesInCalculationOfStatisti', 6)
-            # codes_set(ibufr, 'qualifierForNumberOfMissingValuesInCalculationOfStatisti', 7)
-            # codes_set(ibufr, 'qualifierForNumberOfMissingValuesInCalculationOfStatisti', 8)
-            # lista=[1,2,3,4,5,6,7,8]
-    # tas joku ??? codes_set_array(ibufr, 'qualifierForNumberOfMissingValuesInCalculationOfStatisti', subs.N_MISS)
+            # = 1,2,3,4,5,6,7,8
+    codes_set_array(ibufr, 'qualifierForNumberOfMissingValuesInCalculationOfStatistic', subs.N_MISS)
         # 8020 Total number of missing entities (with respect to accumulation or average) (see Note 6) Years
             #8..15#totalNumberOfMissingEntitiesWithRespectToAccumulationOrAverage
-            # codes_set(ibufr, 'totalNumberOfMissingEntitiesWithRespectToAccumulationOrAverage', S28_YP) # kuukausi -> vuosi
-            # codes_set(ibufr, 'totalNumberOfMissingEntitiesWithRespectToAccumulationOrAverage', S28_YT) # kuukausi -> vuosi
-            # codes_set(ibufr, 'totalNumberOfMissingEntitiesWithRespectToAccumulationOrAverage', S28_YTX) # kuukausi -> vuosi
-            # codes_set(ibufr, 'totalNumberOfMissingEntitiesWithRespectToAccumulationOrAverage', S29_YE) # kuukausi -> vuosi
-            # codes_set(ibufr, 'totalNumberOfMissingEntitiesWithRespectToAccumulationOrAverage', S29_YR) # kuukausi -> vuosi
-            # codes_set(ibufr, 'totalNumberOfMissingEntitiesWithRespectToAccumulationOrAverage', S29_YS) # kuukausi -> vuosi
-            # codes_set(ibufr, 'totalNumberOfMissingEntitiesWithRespectToAccumulationOrAverage', S28_YTX) # kuukausi -> vuosi
-            # codes_set(ibufr, 'totalNumberOfMissingEntitiesWithRespectToAccumulationOrAverage', S28_YTX) # kuukausi -> vuosi
+            # S28_YP # kuukausi -> vuosi
+            # S28_YT # kuukausi -> vuosi
+            # S28_YTX # kuukausi -> vuosi
+            # S29_YE # kuukausi -> vuosi
+            # S29_YR # kuukausi -> vuosi
+            # S29_YS # kuukausi -> vuosi
+            # S28_YTX # kuukausi -> vuosi
+            # S28_YTX # kuukausi -> vuosi
     codes_set_array(ibufr, 'totalNumberOfMissingEntitiesWithRespectToAccumulationOrAverage', subs.TOT_MISS) 
                 # Number of missing years within the reference period shall be reported using Total
                 # number of missing entities (0 08 020) being preceded by Qualifier for number of

@@ -108,21 +108,21 @@ class Subset:
         self.S14_TN = str2float(miss_list, 50)
         self.S24_TX = str2float(miss_list, 50)
         self.S24_TN = str2float(miss_list, 50)
-        self.S13_ST = str2float(miss_list, 50)
-        self.S23_ST = str2float(miss_list, 50)
-        self.S18_MP = str2int(miss_list, 51) 
-        self.S18_MT = str2int(miss_list, 51)
-        self.S19_ME = str2int(miss_list, 51)
-        self.S18_MTX = str2int(miss_list, 51)
+        self.S13_ST = str2float(miss_list, 52) # standard deviation on suhdeluku, eli C -> K ei tarvii
+        self.S23_ST = str2float(miss_list, 52) # tehda, eika pidakkaan
+        self.S18_MP = str2int(miss_list, 51)
+        self.S18_MT = str2int(miss_list, 51) 
+        self.S19_ME = str2int(miss_list, 51) 
+        self.S18_MTX = str2int(miss_list, 51) 
         self.S18_MTN = str2int(miss_list, 51)
         self.S19_MS = str2int(miss_list, 51)
-        self.S19_MR = str2int(miss_list, 51)
-        self.S28_YP = str2int(miss_list, 51)
-        self.S28_YT = str2int(miss_list, 51)
-        self.S28_YTX = str2int(miss_list, 51)
-        self.S29_YE = str2int(miss_list, 51)
-        self.S29_YR = str2int(miss_list, 51)
-        self.S29_YS = str2int(miss_list, 51)
+        self.S19_MR = str2int(miss_list, 51) 
+        self.S28_YP = str2int(miss_list, 56) #$ 0-/ puuttuvat kuukaudet paineen laskennassa
+        self.S28_YT = str2int(miss_list, 56) #$ 0-/ puuttuvat kuukaudet paineen laskennassa
+        self.S28_YTX = str2int(miss_list, 56) #$ 0-/ puuttuvat kuukaudet paineen laskennassa
+        self.S29_YE = str2int(miss_list, 56) #$ 0-/ puuttuvat kuukaudet paineen laskennassa
+        self.S29_YR = str2int(miss_list, 56) #$ 0-/ puuttuvat kuukaudet paineen laskennassa
+        self.S29_YS = str2int(miss_list, 56) #$ 0-/ puuttuvat kuukaudet paineen laskennassa
         self.S38_F10 = str2int(miss_list, 51)
         self.S38_F20 = str2int(miss_list, 51)
         self.S38_F30 = str2int(miss_list, 51)
@@ -201,7 +201,6 @@ class Subset:
                 self.S22_P = str2float(v_a[k_a.index(key)], 34)
             elif key == 'S15_E':
                 self.S15_E = str2float(v_a[k_a.index(key)], 34)
-                print(self.S15_E)
             elif key == 'S25_E':
                 self.S25_E = str2float(v_a[k_a.index(key)], 34)            
             elif key == 'S16_R':
@@ -225,11 +224,9 @@ class Subset:
             elif key == 'S23_T':
                 self.S23_T = str2float(v_a[k_a.index(key)], 50)
             elif key == 'S13_ST':
-                self.S13_ST = str2float(v_a[k_a.index(key)], 50)  
-                print(self.S13_ST)      
+                self.S13_ST = str2float(v_a[k_a.index(key)], 52)     
             elif key == 'S23_ST':
-                self.S23_ST = str2float(v_a[k_a.index(key)], 50)
-                print(self.S23_ST)
+                self.S23_ST = str2float(v_a[k_a.index(key)], 52)
             elif key == 'S14_TX':
                 self.S14_TX = str2float(v_a[k_a.index(key)], 50)
             elif key == 'S24_TX':
@@ -253,17 +250,17 @@ class Subset:
             elif key == 'S19_MR':
                 self.S19_MR = str2int(v_a[k_a.index(key)], 51)
             elif key == 'S28_YP':
-                self.S28_YP = str2int(v_a[k_a.index(key)], 51)
+                self.S28_YP = str2int(v_a[k_a.index(key)], 56)
             elif key == 'S28_YT':
-                self.S28_YT = str2int(v_a[k_a.index(key)], 51)
+                self.S28_YT = str2int(v_a[k_a.index(key)], 56)
             elif key == 'S28_YTX':
-                self.S28_YTX = str2int(v_a[k_a.index(key)], 51)
+                self.S28_YTX = str2int(v_a[k_a.index(key)], 56)
             elif key == 'S29_YE':
-                self.S29_YE = str2int(v_a[k_a.index(key)], 51)
+                self.S29_YE = str2int(v_a[k_a.index(key)], 56)
             elif key == 'S29_YR':
-                self.S29_YR = str2int(v_a[k_a.index(key)], 51)
+                self.S29_YR = str2int(v_a[k_a.index(key)], 56)
             elif key == 'S29_YS':
-                self.S29_YS = str2int(v_a[k_a.index(key)], 51)
+                self.S29_YS = str2int(v_a[k_a.index(key)], 56)
             elif key == 'S17_S':
                 self.S17_S = str2float(v_a[k_a.index(key)], 43)
             elif key == 'S17_PS':
@@ -361,16 +358,14 @@ class Subset:
         self.TMEAN = make_list([self.S13_ST, self.S23_ST], self.NSUB)
         self.E = make_list([self.S15_E, self.S25_E], self.NSUB)
         self.SUND = make_list([self.S17_S, sunshine_pros(self.S17_S, self.S27_S), self.S27_S], self.NSUB)
-        # self.DEL = replication(self.NSUB, self.NR1, self.NR2)
         self.R_AC = make_list([self.S16_R, self.S26_R], self.NSUB)
         self.R_N = make_list([self.S16_NR, self.S26_NR], self.NSUB)
-        self.N_MISS = make_list([1,2,4,7,8,6,5,1,2,3,4,5,6,7,8], self.NSUB)
+        self.N_MISS = make_constant_list([1,2,4,7,8,6,5,1,2,3,4,5,6,7,8], self.NSUB) # pitais olla vuosia
         self.SENSOR = height_of_sensor(self.ELANEM, self.ELTERM)
         self.INSTRUMENT = instrument_type(self.NSUB)
         self.FS = first_order_statistics(self.NSUB)
         self.IND = observing_method_extreme_temperatures(self.NSUB)
-        self.CND = make_list([0,1,2,3,4,5,6,7,8,16,17,18,19,20,21,22,23,24,10, 11, 12, 13, 14, 15], self.NSUB)
-
+        self.CND = make_constant_list([0,1,2,3,4,5,6,7,8,16,17,18,19,20,21,22,23,24,10, 11, 12, 13, 14, 15], self.NSUB)
 
 # 6.
 
@@ -573,21 +568,6 @@ def height_of_sensor(elanem_list, elterm_list):
     return float_list
 
 
-def replication(ns, nr1_list, nr2_list):
-    """
-    Functions combines the 2 replications, which are used to make
-    the array for delaid replication. It depends on:
-        ns = NSUB = number of subsets
-        nr1_list = NR1 = number of replication in sequence 302005
-        nr2_list = NR2 = number of replication in sequence 302036
-    """
-    int_list = []
-    for i in range(0, ns):
-        int_list.append(nr1_list[i])
-        int_list.append(nr2_list[i])
-    return int_list
-
-
 def number_of_repetition2(ns):
     """
     This function gives delaid repetition for 302036.
@@ -643,6 +623,8 @@ def not_missing(str_value, k_id):
         value = int(value*12.5 + 0.5)
     elif k_id == 53 and value > 81900:
         value = 81900
+    elif k_id == 56:
+        value = int(value / 12)
     elif k_id == 64:
         value = int(str_value[:2])
     elif k_id == 65:
@@ -714,3 +696,12 @@ def make_list(list_of_lists, n_sub):
             result_list.append(l[sub])
     return result_list
 
+def make_constant_list(constant_list, n_sub):
+    """
+    This function makes same constant list for each subset.
+    """
+    result_list = []
+    for i in range(0, n_sub):
+        for j in range(0, len(constant_list)):
+            result_list.append(constant_list[j])
+    return result_list
