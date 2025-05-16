@@ -6,7 +6,7 @@ climate2bufr.py uses subset_arrays.py and separate_keys_and_values.py in convers
 
 ## Installation
 
-Use the yum/dnf package manager to install climate-to-bufr. It can be found from fmiforge repo.
+...
 
 ## Usage
 
