@@ -7,33 +7,19 @@ from eccodes import CODES_MISSING_DOUBLE as missD
 
 class Subset:
     """
-    This class makes keyname objects with key names that are mostly used in synop
+    This class makes keyname objects with key names that are used in climate
     data. All the values with same keyname are placed into the same object as an array.
-    The values are modified in different functions according to Codes manual.
+    The values are modified in different functions according to codes manual.
         1. At first Subset class makes all the values, which are not dependent
         on any other objects to be missing. Only the number of subsets (NSUB) is given.
         2. The values are read form v_a, and value is placed in keyname object acording
         keyname's index position. Values that don't depend on any other are given first.
-        As an exception, block number and sation number are given acording to WMO:
-            A 5-digit number yyxxx: the first 2 digits (yy) are called a block number
-            (for example, 02 is for Finland and Sweden), the last 3 digits (xxx) are
-            called a station number, which tells the id of the station.
-        3. After that, values that depend on N_CALC are set to missing.
-
-        5. The rest of all the needed values are given.
-        6. Functions which gives the right values to bufr message, are placed below.
+        As an exception, block number and sation number are given acording to WMO. Date
+        values are picked from REPORDED MONTH and WIGOS valus are picked from WSI.
+        3. The rest of all the needed values are given.
+        4. Functions which gives the right values to bufr message, are placed below.
     """
     # 1.
-    # ON: ELANEM=12;ELBARO=26;ELSTAT=26;ELTERM=2;LAT=62.93808;LON=22.48878;STATION_NAME=Seinajoki Pelmaa;STATION_TYPE=0;
-    # ON: WMON=02833;WSI=0-20000-0-02833;REPORT_MONTH=2024-11-01;S11_P=1002.2;S12_P=1006.1;S13_ST=3;S13_T=1.1;S14_TN=-1.6;S14_TX=3.3;
-    # ON: S15_E=6.2;S16_NR=13;S16_R=63.6;S16_RD=5;S17_PS=35;S17_S=/;S18_MP=0;S18_MT=0;S18_MTN=0;S18_MTX=0;S19_ME=0;S19_MR=0;S19_MS=30;
-    # ON: S20_YB=81;S20_YC=10;S21_P=/;S22_P=/;S23_ST=/;S23_T=-1.1;S24_TN=-3.8;S24_TX=1.2;S25_E=/;S26_NR=10;S26_R=45;S27_S=35;S28_YP=/;
-    # ON: S28_YT=0;S28_YTX=0;S29_YE=/;S29_YR=0;S29_YS=0;S30_T25=0;S30_T30=0;S31_T35=0;S31_T40=0;S32_TN0=20;S32_TX0=7;S33_R01=13;S33_R05=7;
-    # ON: S34_R10=1;S34_R50=0;S35_R100=0;S35_R150=0;S36_S00=11;S36_S01=11;S37_S10=5;S37_S50=0;S38_F10=1;S38_F20=0;S38_F30=0;S39_V1=/;
-    # ON: S39_V2=/;S39_V3=/;S44_RX=10.4;S44_YR=17;WMO=2833*
-    # ON: S40_TXD=6.2;S41_TND=-4.5;S42_TAX=8.7;S43_TAN=-6.4;S45_IW=0;S45_FX=17.2; S40_YX=26;S41_YN=21;S42_YAX=65;S45_YFX=25;S43_YAN=23;
-    # Ei varmaan tarvii: BULLETIN_ID=52;HEADER_INFO=SC;EXEC_DATE=2024-12-05 05:46:07;FMISID=101486;
-
     def __init__(self, key_array, value_array):
         k_a = key_array
         v_a = value_array
@@ -78,28 +64,21 @@ class Subset:
         self.S43_YAN = str2int(miss_list, 21)
         self.S45_YFX = str2int(miss_list, 21)
         self.S44_YR = str2int(miss_list, 21)
-        # self.P_SEA = str2float(miss_list, 34)
-        # self.P_ST = str2float(miss_list, 34)
-        self.S11_P = str2float(miss_list, 34)  # hPA -> [PA]
-        self.S21_P = str2float(miss_list, 34)  # hPA -> [PA]
-        self.P_ST = make_list([self.S11_P, self.S21_P], self.NSUB)
-        self.S12_P = str2float(miss_list, 34)  # hPA -> [PA]
-        self.S22_P = str2float(miss_list, 34)  # hPA -> [PA]
-        self.P_SEA = make_list([self.S12_P, self.S22_P], self.NSUB)
-        self.S15_E = str2float(miss_list, 34)  # hPA -> [PA]
-        self.S25_E = str2float(miss_list, 34)  # hPA -> [PA]
-        self.S16_R = str2float(miss_list, 40)  #  1.0 kg /m² ~ 1 mm 
-        self.S26_R = str2float(miss_list, 40)  #  1.0 kg /m² ~ 1 mm 
+        self.S11_P = str2float(miss_list, 34)
+        self.S21_P = str2float(miss_list, 34)
+        self.S12_P = str2float(miss_list, 34)
+        self.S22_P = str2float(miss_list, 34)
+        self.S15_E = str2float(miss_list, 34)
+        self.S25_E = str2float(miss_list, 34)
+        self.S16_R = str2float(miss_list, 40)
+        self.S26_R = str2float(miss_list, 40)
         self.S16_RD = str2int(miss_list, 31)
         self.S16_NR = str2int(miss_list, 32)
         self.S26_NR = str2int(miss_list, 32)
-        self.S44_RX = str2float(miss_list, 44) #  1.0 kg /m² ~ 1 mm 
-        self.S17_S = str2float(miss_list, 43)  # [h] tulee valmiina tunneissa
-        self.S17_PS = str2float(miss_list, 43)  # = S27_S?? [prosenteissa varmaan 0-100] HAV-sivuilla: s17_ps = s17_s / s27_s
-        self.S27_S = str2float(miss_list, 43)  # [h] tulee valmiina tunneissa
-        # ELi 17_S on kuukausi arv paisteelle
-        # ja  27_S on 30v vertailu arvo paisteelle
-        # ja  17_PS on paiste 30v kauteen verrattuna
+        self.S44_RX = str2float(miss_list, 44)
+        self.S17_S = str2float(miss_list, 43)
+        self.S17_PS = str2float(miss_list, 43)
+        self.S27_S = str2float(miss_list, 43)
         self.S13_T = str2float(miss_list, 50)
         self.S42_TAX = str2float(miss_list, 50)
         self.S43_TAN = str2float(miss_list, 50)
@@ -108,21 +87,21 @@ class Subset:
         self.S14_TN = str2float(miss_list, 50)
         self.S24_TX = str2float(miss_list, 50)
         self.S24_TN = str2float(miss_list, 50)
-        self.S13_ST = str2float(miss_list, 52) # standard deviation on suhdeluku, eli C -> K ei tarvii
-        self.S23_ST = str2float(miss_list, 52) # tehda, eika pidakkaan
+        self.S13_ST = str2float(miss_list, 52)
+        self.S23_ST = str2float(miss_list, 52)
         self.S18_MP = str2int(miss_list, 51)
-        self.S18_MT = str2int(miss_list, 51) 
-        self.S19_ME = str2int(miss_list, 51) 
-        self.S18_MTX = str2int(miss_list, 51) 
+        self.S18_MT = str2int(miss_list, 51)
+        self.S19_ME = str2int(miss_list, 51)
+        self.S18_MTX = str2int(miss_list, 51)
         self.S18_MTN = str2int(miss_list, 51)
         self.S19_MS = str2int(miss_list, 51)
-        self.S19_MR = str2int(miss_list, 51) 
-        self.S28_YP = str2int(miss_list, 56) #$ 0-/ puuttuvat kuukaudet paineen laskennassa
-        self.S28_YT = str2int(miss_list, 56) #$ 0-/ puuttuvat kuukaudet paineen laskennassa
-        self.S28_YTX = str2int(miss_list, 56) #$ 0-/ puuttuvat kuukaudet paineen laskennassa
-        self.S29_YE = str2int(miss_list, 56) #$ 0-/ puuttuvat kuukaudet paineen laskennassa
-        self.S29_YR = str2int(miss_list, 56) #$ 0-/ puuttuvat kuukaudet paineen laskennassa
-        self.S29_YS = str2int(miss_list, 56) #$ 0-/ puuttuvat kuukaudet paineen laskennassa
+        self.S19_MR = str2int(miss_list, 51)
+        self.S28_YP = str2int(miss_list, 56)
+        self.S28_YT = str2int(miss_list, 56)
+        self.S28_YTX = str2int(miss_list, 56)
+        self.S29_YE = str2int(miss_list, 56)
+        self.S29_YR = str2int(miss_list, 56)
+        self.S29_YS = str2int(miss_list, 56)
         self.S38_F10 = str2int(miss_list, 51)
         self.S38_F20 = str2int(miss_list, 51)
         self.S38_F30 = str2int(miss_list, 51)
@@ -202,7 +181,7 @@ class Subset:
             elif key == 'S15_E':
                 self.S15_E = str2float(v_a[k_a.index(key)], 34)
             elif key == 'S25_E':
-                self.S25_E = str2float(v_a[k_a.index(key)], 34)            
+                self.S25_E = str2float(v_a[k_a.index(key)], 34)
             elif key == 'S16_R':
                 self.S16_R = str2float(v_a[k_a.index(key)], 40)
             elif key == 'S26_R':
@@ -224,7 +203,7 @@ class Subset:
             elif key == 'S23_T':
                 self.S23_T = str2float(v_a[k_a.index(key)], 50)
             elif key == 'S13_ST':
-                self.S13_ST = str2float(v_a[k_a.index(key)], 52)     
+                self.S13_ST = str2float(v_a[k_a.index(key)], 52)
             elif key == 'S23_ST':
                 self.S23_ST = str2float(v_a[k_a.index(key)], 52)
             elif key == 'S14_TX':
@@ -266,7 +245,7 @@ class Subset:
             elif key == 'S17_PS':
                 self.S17_PS = str2float(v_a[k_a.index(key)], 43)
             elif key == 'S27_S':
-                self.S27_S = str2float(v_a[k_a.index(key)], 43)                           
+                self.S27_S = str2float(v_a[k_a.index(key)], 43)
             elif key == 'S20_YB':
                 self.S20_YB = get_times(v_a[k_a.index(key)], 1)
             elif key == 'S20_YC':
@@ -332,24 +311,28 @@ class Subset:
             elif key == 'S45_FX':
                 self.S45_FX = str2float(v_a[k_a.index(key)], 67)
 
-    # 5.
-    # Tee funktiot, etta tulee yks aina jokaisesta jarjestuksessa, ei ensin kaikki yhet ja sitten toiset
-        self.YYYY = make_list([self.R_YYYY, self.S20_YB, self.S20_YC, self.S20_YB, self.S20_YC], self.NSUB)
+    # 3.
+        self.YYYY = make_list([self.R_YYYY, self.S20_YB, self.S20_YC, self.S20_YB,
+            self.S20_YC], self.NSUB)
         self.MM = make_list([self.R_MM, self.R_MM, self.R_MM], self.NSUB)
-        self.DD = make_list([self.R_DD, self.S40_YX, self.S41_YN, self.S42_YAX, self.S43_YAN, self.S45_YFX, self.R_DD, self.S44_YR, self.R_DD, self.R_DD], self.NSUB)
+        self.DD = make_day_list([self.R_DD, self.S40_YX, self.S41_YN, self.S42_YAX, self.S43_YAN,
+            self.S45_YFX, self.R_DD, self.S44_YR, self.R_DD, self.R_DD], self.NSUB)
         self.HH24 = make_list([self.R_HH0, self.R_HH6, self.R_HH0, self.R_HH6], self.NSUB)
         self.MI = self.R_MI
         self.NM = days_in_month_list(self.R_YYYY, self.R_MM)
         self.UTC_DIFF = get_times(self.R_MM, 4)
-        self.TP = make_list([self.UTC_DIFF, self.NM, self.NM, self.UTC_DIFF, get_number_list(self.NSUB, 1), get_number_list(self.NSUB, 1)], self.NSUB)
-        self.TOT_MISS = make_list([self.S18_MP, self.S18_MT, self.S19_ME, self.S18_MTX, self.S18_MTN,
-            self.S19_MS, self.S19_MR,
-            self.S28_YP, self.S28_YT, self.S28_YTX,self.S29_YE, self.S29_YR, self.S29_YS,self.S28_YTX, self.S28_YTX], self.NSUB)
+        self.TP = make_list([self.UTC_DIFF, self.NM, self.NM, self.UTC_DIFF,
+            get_number_list(self.NSUB, 1), get_number_list(self.NSUB, 1)], self.NSUB)
+        self.TOT_MISS = make_list([self.S18_MP, self.S18_MT, self.S19_ME, self.S18_MTX,
+            self.S18_MTN, self.S19_MS, self.S19_MR,
+            self.S28_YP, self.S28_YT, self.S28_YTX,self.S29_YE, self.S29_YR, self.S29_YS,
+            self.S28_YTX, self.S28_YTX], self.NSUB)
         self.TNRA = make_list([self.S38_F10, self.S38_F20, self.S38_F30, self.S32_TX0,
             self.S30_T25, self.S30_T30, self.S31_T35, self.S31_T40, self.S32_TN0,
             self.S36_S00, self.S36_S01, self.S37_S10, self.S37_S50,
             self.S39_V1, self.S39_V2, self.S39_V3, str2int(miss_list, 51), str2int(miss_list, 51),
-            self.S33_R01, self.S33_R05, self.S34_R10, self.S34_R50, self.S35_R100, self.S35_R150], self.NSUB)
+            self.S33_R01, self.S33_R05, self.S34_R10, self.S34_R50, self.S35_R100, self.S35_R150],
+            self.NSUB)
         self.P_ST = make_list([self.S11_P, self.S21_P], self.NSUB)
         self.P_SEA = make_list([self.S12_P, self.S22_P], self.NSUB)
         self.T = make_list([self.S13_T, self.S42_TAX, self.S43_TAN, self.S23_T], self.NSUB)
@@ -357,17 +340,20 @@ class Subset:
         self.TMIN = make_list([self.S14_TN, self.S24_TN], self.NSUB)
         self.TMEAN = make_list([self.S13_ST, self.S23_ST], self.NSUB)
         self.E = make_list([self.S15_E, self.S25_E], self.NSUB)
-        self.SUND = make_list([self.S17_S, sunshine_pros(self.S17_S, self.S27_S), self.S27_S], self.NSUB)
+        self.SUND = make_list([self.S17_S, sunshine_pros(self.S17_S, self.S27_S), self.S27_S],
+            self.NSUB)
         self.R_AC = make_list([self.S16_R, self.S26_R], self.NSUB)
         self.R_N = make_list([self.S16_NR, self.S26_NR], self.NSUB)
-        self.N_MISS = make_constant_list([1,2,4,7,8,6,5,1,2,3,4,5,6,7,8], self.NSUB) # pitais olla vuosia
+        self.N_MISS = make_const_list([1,2,4,7,8,6,5,1,2,3,4,5,6,7,8], self.NSUB)
         self.SENSOR = height_of_sensor(self.ELANEM, self.ELTERM)
         self.INSTRUMENT = instrument_type(self.NSUB)
         self.FS = first_order_statistics(self.NSUB)
         self.IND = observing_method_extreme_temperatures(self.NSUB)
-        self.CND = make_constant_list([0,1,2,3,4,5,6,7,8,16,17,18,19,20,21,22,23,24,10, 11, 12, 13, 14, 15], self.NSUB)
-
-# 6.
+        self.CND = make_const_list([0,1,2,3,4,5,6,7,8,16,17,18,19,20,21,22,23,24,10,11,12,13,14,15],
+            self.NSUB)
+        self.D_OC = day_of_occurance_qualifier(self.S40_YX, self.S41_YN, self.S42_YAX, self.S43_YAN,
+            self.S45_YFX, miss_list, self.S44_YR)
+# 4.
 
 def get_wigos(wigos_id, key_id):
     """
@@ -468,9 +454,9 @@ def days_in_month(year, month):
     """
     This function return number of days in month.
     If it's February, the leap year is checked.
-    """ 
+    """
     days_in_months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-    
+
     if month == 2 and is_leap_year(year):
         return 29
     else:
@@ -487,7 +473,7 @@ def days_in_month_list(y_list, m_list):
 
 def sunshine_pros(s_month_list, s_30v_list):
     """
-    the percentage of the normal that value represents shall be reported using
+    The percentage of the normal that value represents shall be reported using
     Total sunshine (0 14 033). Any missing element shall be reported as a missing value.
     Notes:
         (1) If the percentage of the normal is 1% or less but greater than 0, Total sunshine
@@ -568,18 +554,6 @@ def height_of_sensor(elanem_list, elterm_list):
     return float_list
 
 
-def number_of_repetition2(ns):
-    """
-    This function gives delaid repetition for 302036.
-    """
-    int_list = []
-    i = 0
-    while i < ns:
-        int_list.append(0)
-        i = i + 1
-    return int_list
-
-
 def instrument_type(ns):
     """
     This function gives the total list of instrument types.
@@ -592,6 +566,29 @@ def instrument_type(ns):
         i = i + 1
     return float_list
 
+def day_of_occurance_qualifier(d1_list, d2_list, d3_list, d4_list, d5_list, d6_list, d7_list):
+    """
+    This functions return a list of day of occrurance qualifiers.
+    If the extreme daily value occurred on only one day, the day of occurrence qualifier
+    shall be set to 0. If the extreme daily value occurred on more than one day, the first
+    day shall be reported for 0 04 003 and the day of occurrence qualifier shall be set to 1.
+    If the extreme daily value is missing, the day of occurrence qualifier shall be set to 3.
+    The input in this function is list of the days when the extreme daily value occured.
+    If the value occured more than once the value of day is increased with 50.
+    """
+    q_list = []
+    d_list_of_lists = [d1_list, d2_list, d3_list, d4_list, d5_list, d6_list, d7_list]
+    for sub in range(0, len(d1_list)):
+        for d_list in d_list_of_lists:
+            if d_list[sub] == '-1e+100':
+                q_list.append(3)
+            elif int(d_list[sub]) >= 1 and int(d_list[sub]) <= 31:
+                q_list.append(0)
+            elif int(d_list[sub]) > 31 and int(d_list[sub]) <= 81:
+                q_list.append(1)
+            else:
+                q_list.append(3)
+    return q_list
 
 def precipitation(str_value):
     """
@@ -623,8 +620,6 @@ def not_missing(str_value, k_id):
         value = int(value*12.5 + 0.5)
     elif k_id == 53 and value > 81900:
         value = 81900
-    elif k_id == 56:
-        value = int(value / 12)
     elif k_id == 64:
         value = int(str_value[:2])
     elif k_id == 65:
@@ -677,11 +672,37 @@ def str2float(str_list, k_id):
             float_list.append(float(str_list[i]))
     return float_list
 
+def make_day_list(list_of_lists, n_sub):
+    """
+    This function gets list of lists as input
+    and it combines the lists to a result list
+    by taking the first element of every list,
+    then the second, and so on..
+    If a single list is provided, it will be treated as a list of lists with one list.
+    This function also check if the day is in range [1,31] or [51,81]. If the later, the
+    result day is decreased by 50.
+    """
+    # Check if list_of_lists is a list of integers or other non-list elements
+    if list_of_lists and not any(isinstance(item, list) for item in list_of_lists):
+        # Wrap the single list in another list to make it a list of lists
+        list_of_lists = [list_of_lists]
+    result_list = []
+
+    for sub in range (0, n_sub):
+        for l in list_of_lists:
+            if l[sub] == '-1e+100':
+                result_list.append(miss)
+            elif int(l[sub]) >= 51 and int(l[sub]) <= 81:
+                result_list.append(int(l[sub]) - 50)
+            else:
+                result_list.append(int(l[sub]))
+    return result_list
+
 def make_list(list_of_lists, n_sub):
     """
     This function gets list of lists as input
     and it combines the lists to a result list
-    by taking the first element of every list, 
+    by taking the first element of every list,
     then the second, and so on..
     If a single list is provided, it will be treated as a list of lists with one list.
     """
@@ -690,13 +711,13 @@ def make_list(list_of_lists, n_sub):
         # Wrap the single list in another list to make it a list of lists
         list_of_lists = [list_of_lists]
     result_list = []
-    
+
     for sub in range (0, n_sub):
         for l in list_of_lists:
             result_list.append(l[sub])
     return result_list
 
-def make_constant_list(constant_list, n_sub):
+def make_const_list(constant_list, n_sub):
     """
     This function makes same constant list for each subset.
     """
