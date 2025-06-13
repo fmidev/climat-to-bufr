@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 """
-climate2bufr.py is the main program which converts climate data to bufr message (edition 4).
-Run program by command: python3 climate2bufr.py name_of_the_climate_file.dat
+climat2bufr.py is the main program which converts climat data to bufr message (edition 4).
+Run program by command: python3 climat2bufr.py name_of_the_climat_file.dat
 """
 import sys
 import traceback
@@ -16,30 +16,30 @@ def print_error_message(error_code, text):
     """
     This function prints out error message and stops program.
         If error_code = 0: Error is with naming the bufr file according to the first row of
-        climate data file.
-        If error_code = 1: Error is with the data structure in climate file.
+        climat data file.
+        If error_code = 1: Error is with the data structure in climat file.
         Function gets argument text, which adds information to the error text.
     """
-    print('\nError in climate data:\n')
+    print('\nError in climat data:\n')
     if error_code == 0:
         print('Error with naming the bufr file.')
-        print('The first row of climate data shoud be: ')
+        print('The first row of climat data shoud be: ')
         print('FILENAME: /path/to/file/TTAAII_year-month-day_hour:minute_something.dat')
         print(text)
     elif error_code == 1:
-        print('Row in climate data with n data values should be: ')
+        print('Row in climat data with n data values should be: ')
         print('keyname1=value1;keyname2=value2;keyname3=value3;...;keynamen=valuen*')
         print(text)
     sys.exit(1)
 
 def check_name(data):
     """
-    This function check if the first row in climate data (data) is written correctly.
+    This function check if the first row in climat data (data) is written correctly.
     """
     try:
         test = data[0]
     except IndexError:
-        print_error_message(0, 'climate file is empty!\n')
+        print_error_message(0, 'climat file is empty!\n')
 
     if 'FILENAME: ' not in data[0]:
         print_error_message(0, '"Filename:  " is missing!\n')
@@ -77,27 +77,27 @@ def check_name(data):
 
 def check_data(data):
     """
-    This function checks if the data section in climate file is written correctly.
-    Argument data is the data in climate file.
+    This function checks if the data section in climat file is written correctly.
+    Argument data is the data in climat file.
     """
     try:
         data[1]
     except IndexError:
-        print_error_message(1, 'climate file seems not to have any data.\n')
+        print_error_message(1, 'climat file seems not to have any data.\n')
 
     for i in range(1, len(data)):
         if ';' not in data[i] or '=' not in data[i] or '*' not in data[i]:
-            message = 'climate file has bad data in row ' + str(i) + '.\n'
+            message = 'climat file has bad data in row ' + str(i) + '.\n'
             print_error_message(1, message)
     for i in range(1, len(data)):
         if ';=' in data[i] or '=;' in data[i]:
-            message = 'climate file has bad data in row ' + str(i) + '.\n'
+            message = 'climat file has bad data in row ' + str(i) + '.\n'
             print_error_message(1, message)
         elif ';*' in data[i] or '*;' in data[i]:
-            message = 'climate file has bad data in row ' + str(i) + '.\n'
+            message = 'climat file has bad data in row ' + str(i) + '.\n'
             print_error_message(1, message)
         elif '=*' in data[i] or '*=' in data[i]:
-            message = 'climate file has bad data in row ' + str(i) + '.\n'
+            message = 'climat file has bad data in row ' + str(i) + '.\n'
             print_error_message(1, message)
 
     return data
@@ -138,9 +138,9 @@ def read_filename(row):
     output.append(time[1])
     return output
 
-def read_climate(rows):
+def read_climat(rows):
     """
-    Separates climate data to key and value arrays:
+    Separates climat data to key and value arrays:
         1. Splits rows from ";", -> [ [key=value], [key=value], ...]
         2. Splits: [key=value] in each row to [key, value] and the last value from "*".
     """
@@ -173,11 +173,11 @@ def message_encoding(input_file):
     Main sends input file here.
     1. Reads lines from input_file and checks (check_name) if file's first row
     contains right parts for naming the output file. After that it checks (check_data)
-    if the climate data in input_file contains right parts for fetching the data.
+    if the climat data in input_file contains right parts for fetching the data.
     2. Sends the first row of input file to read_filename to get the name for the
     output file. After that it checks if output has a right amount of values for naming
     the file.
-    3. Calls read_climate to get keys and values from input file.
+    3. Calls read_climat to get keys and values from input file.
     4. Separates keys and values to their own arrays and makes subset array objects.
     Keys and values are separated by separate_keys_and_values module.
     Subset object has all the values from different subsets in the same array
@@ -202,7 +202,7 @@ def message_encoding(input_file):
     if len(output) != 4:
         print_error_message(0, '\n')
     # 3.
-    data_in = read_climate(rows_in_input_file[1:])
+    data_in = read_climat(rows_in_input_file[1:])
 
     # 4.
     keys_in_each_row = []
@@ -960,15 +960,15 @@ def main():
     function which writes the bufr into the output file named by input file information.
     """
     if len(sys.argv) < 2:
-        print('Usage: ', sys.argv[0], ' climate_filename', file=sys.stderr)
+        print('Usage: ', sys.argv[0], ' climat_filename', file=sys.stderr)
         sys.exit(1)
-    climate_filename = sys.argv[1]
+    climat_filename = sys.argv[1]
 
     try:
-        with open(climate_filename, 'r', encoding="utf8") as climate_file:
-            print('climate data from file: ', climate_filename)
+        with open(climat_filename, 'r', encoding="utf8") as climat_file:
+            print('climat data from file: ', climat_filename)
             try:
-                bufr_filename = message_encoding(climate_file)
+                bufr_filename = message_encoding(climat_file)
             except CodesInternalError as err:
                 if VERBOSE:
                     traceback.print_exc(file=sys.stderr)
@@ -982,7 +982,7 @@ def main():
                     print(err)
                 return 1
             finally:
-                climate_file.close()
+                climat_file.close()
     except FileNotFoundError as err:
         if VERBOSE:
             traceback.print_exc(file=sys.stderr)

@@ -7,7 +7,7 @@ from eccodes import CODES_MISSING_DOUBLE as missD
 
 class Subset:
     """
-    This class makes keyname objects with key names that are used in climate
+    This class makes keyname objects with key names that are used in climat
     data. All the values with same keyname are placed into the same object as an array.
     The values are modified in different functions according to codes manual.
         1. At first Subset class makes all the values, which are not dependent
