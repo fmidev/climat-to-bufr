@@ -23,57 +23,15 @@ def print_error_message(error_code, text):
     print('\nError in climat data:\n')
     if error_code == 0:
         print('Error with naming the bufr file.')
-        print('The first row of climat data shoud be: ')
-        print('FILENAME: /path/to/file/TTAAII_year-month-day_hour:minute_something.dat')
+        print('The input climat data shoud be: ')
+        print('FILENAME: TTAAII_year-month-day_hour:minute_code_datetime.dat')
         print(text)
     elif error_code == 1:
         print('Row in climat data with n data values should be: ')
-        print('keyname1=value1;keyname2=value2;keyname3=value3;...;keynamen=valuen*')
+        print('keyname1=value1,keyname2=value2,keyname3=value3,...,keynamen=valuen,*')
         print(text)
     sys.exit(1)
 
-def check_name(data):
-    """
-    This function check if the first row in climat data (data) is written correctly.
-    """
-    try:
-        test = data[0]
-    except IndexError:
-        print_error_message(0, 'climat file is empty!\n')
-
-    if 'FILENAME: ' not in data[0]:
-        print_error_message(0, '"Filename:  " is missing!\n')
-    elif '.dat' not in data[0]:
-        print_error_message(0, '".dat" is missing!\n')
-    elif '_' not in data[0]:
-        print_error_message(0, '"_" are missing!\n')
-
-    test = data[0].split('/')
-    test = test[len(test) - 1].split('_')
-    if len(test) < 4:
-        print_error_message(0, 'Amount of "_" is less than 3!\n')
-    elif '-' not in test[1]:
-        print_error_message(0, '"-" or "_" in wrong place!\n')
-    elif ':' not in test[2]:
-        print_error_message(0, '":" not in right place!\n')
-
-    day = test[1].split('-')
-    time = test[2].split(':')
-
-    if len(day) != 3:
-        print_error_message(0, '"year-month-day" is wrong!\n')
-    elif len(time) !=2:
-        print_error_message(0, '"hour:minute" is wrong!\n')
-    try:
-        int(day[0])
-        int(day[1])
-        int(day[2])
-        int(time[0])
-        int(time[1])
-    except ValueError:
-        print_error_message(0, 'year, month, day, hour and minute should be integers!\n')
-
-    return data
 
 def check_data(data):
     """
@@ -81,19 +39,16 @@ def check_data(data):
     Argument data is the data in climat file.
     """
     try:
-        data[1]
+        data[0]
     except IndexError:
         print_error_message(1, 'climat file seems not to have any data.\n')
 
     for i in range(1, len(data)):
-        if ';' not in data[i] or '=' not in data[i] or '*' not in data[i]:
+        if ',' not in data[i] or '=' not in data[i] or '*' not in data[i]:
             message = 'climat file has bad data in row ' + str(i) + '.\n'
             print_error_message(1, message)
     for i in range(1, len(data)):
-        if ';=' in data[i] or '=;' in data[i]:
-            message = 'climat file has bad data in row ' + str(i) + '.\n'
-            print_error_message(1, message)
-        elif ';*' in data[i] or '*;' in data[i]:
+        if ',=' in data[i] or '=,' in data[i]:
             message = 'climat file has bad data in row ' + str(i) + '.\n'
             print_error_message(1, message)
         elif '=*' in data[i] or '*=' in data[i]:
@@ -141,13 +96,13 @@ def read_filename(row):
 def read_climat(rows):
     """
     Separates climat data to key and value arrays:
-        1. Splits rows from ";", -> [ [key=value], [key=value], ...]
+        1. Splits rows from ",", -> [ [key=value], [key=value], ...]
         2. Splits: [key=value] in each row to [key, value] and the last value from "*".
     """
     # 1.
     split_rows = []
     for row in rows:
-        split_rows.append(row.split(';'))
+        split_rows.append(row.split(','))
 
     number_of_rows =  len(split_rows)
 
@@ -157,18 +112,18 @@ def read_climat(rows):
         key_value_array = []
         row = split_rows[i]
         number_of_arguments = len(row)
-        for j in range(0, number_of_arguments):
+        if '*' not in row[number_of_arguments-1]:
+            print("Error: Data row does not end with *")
+            print(row[number_of_arguments-1])
+            sys.exit(1)
+        for j in range(0, number_of_arguments -1):
             key_value_pair = row[j]
             split_key_value = key_value_pair.split('=')
-            if j == number_of_arguments - 1:
-                last_value = split_key_value[1]
-                only_value = last_value.split('*')
-                split_key_value[1] = only_value[0]
             key_value_array.append(split_key_value)
         rows_with_key_value_pairs.append(key_value_array)
     return rows_with_key_value_pairs
 
-def message_encoding(input_file):
+def message_encoding(input_file, input_filename):
     """
     Main sends input file here.
     1. Reads lines from input_file and checks (check_name) if file's first row
@@ -194,15 +149,17 @@ def message_encoding(input_file):
 
     # 1.
     rows_in_input_file = input_file.readlines()
-    rows_in_input_file = check_name(rows_in_input_file)
     rows_in_input_file = check_data(rows_in_input_file)
 
     # 2.
-    output = read_filename(rows_in_input_file[0])
-    if len(output) != 4:
+    #output = read_filename(rows_in_input_file[0])
+    output = input_filename.split('_')
+
+
+    if len(output) != 5:
         print_error_message(0, '\n')
     # 3.
-    data_in = read_climat(rows_in_input_file[1:])
+    data_in = read_climat(rows_in_input_file)
 
     # 4.
     keys_in_each_row = []
@@ -238,8 +195,8 @@ def message_encoding(input_file):
 
     # 8.
     centre = codes_get_string(bufr, 'bufrHeaderCentre')
-    output_filename = output[0] + '_' + str(centre.upper()) + '_' + output[1] + output[2]
-    output_filename = output_filename + output[3] + '.bufr'
+    output_filename = output[0] + '_' + str(centre.upper()) + '_' + output[1] + '_' + output[3]
+    output_filename = output_filename + '.bufr'
 
     # 9.
     with open(output_filename, 'wb') as fout:
@@ -968,7 +925,7 @@ def main():
         with open(climat_filename, 'r', encoding="utf8") as climat_file:
             print('climat data from file: ', climat_filename)
             try:
-                bufr_filename = message_encoding(climat_file)
+                bufr_filename = message_encoding(climat_file, climat_filename)
             except CodesInternalError as err:
                 if VERBOSE:
                     traceback.print_exc(file=sys.stderr)
